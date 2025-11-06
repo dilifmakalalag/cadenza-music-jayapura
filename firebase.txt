@@ -1,0 +1,63 @@
+// Firestore CRUD helpers for `siswa` collection
+import {
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  getDocs,
+  query,
+  orderBy,
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { db } from "./firebase-config.js";
+
+const siswaCol = collection(db, "siswa");
+
+async function addStudent(data) {
+  const docRef = await addDoc(siswaCol, data);
+  return docRef.id;
+}
+
+function onStudentsSnapshot(callback) {
+  // real-time listener ordered by name
+  const q = query(siswaCol, orderBy("namaSiswa"));
+  return onSnapshot(q, (snapshot) => {
+    const students = [];
+    snapshot.forEach((doc) => students.push({ id: doc.id, ...doc.data() }));
+    callback(students);
+  });
+}
+
+async function getStudent(id) {
+  const d = await getDoc(doc(db, "siswa", id));
+  if (!d.exists()) return null;
+  return { id: d.id, ...d.data() };
+}
+
+async function updateStudent(id, data) {
+  const dref = doc(db, "siswa", id);
+  await updateDoc(dref, data);
+}
+
+async function deleteStudent(id) {
+  await deleteDoc(doc(db, "siswa", id));
+}
+
+async function getStudentsOnce() {
+  const q = query(siswaCol, orderBy("namaSiswa"));
+  const snapshot = await getDocs(q);
+  const students = [];
+  snapshot.forEach((d) => students.push({ id: d.id, ...d.data() }));
+  return students;
+}
+
+export {
+  addStudent,
+  onStudentsSnapshot,
+  getStudent,
+  updateStudent,
+  deleteStudent,
+  getStudentsOnce,
+};

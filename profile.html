@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CADENZA — Profil Siswa</title>
+
+    <!-- Vendor CSS -->
+    <link
+      rel="stylesheet"
+      href="assets/vendors/mdi/css/materialdesignicons.min.css"
+    />
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="shortcut icon" href="assets/images/favicon.png" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      /* Dark-ish inputs/look to match other pages */
+      .form-control,
+      .form-select,
+      .form-control:focus,
+      .form-select:focus {
+        color: #fff;
+        background: #2b2f32;
+        border-color: rgba(255, 255, 255, 0.25);
+      }
+      .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--bs-secondary);
+        box-shadow: 0 0 0 0.2rem rgba(var(--bs-secondary-rgb), 0.25);
+      }
+      .chip {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(108, 117, 125, 0.25);
+        margin: 0 0.35rem 0.35rem 0;
+        font-size: 0.85rem;
+      }
+      .qr-img {
+        width: 150px;
+        height: 150px;
+        object-fit: contain;
+      }
+      .stat-label {
+        color: #6c757d;
+        font-size: 0.85rem;
+      }
+      .section-title {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+      .list-unstyled li {
+        margin-bottom: 0.25rem;
+      }
+      .table td,
+      .table th {
+        vertical-align: middle;
+      }
+      #nilaiTable thead {
+        background-color: var(--bs-secondary);
+        color: #fff;
+      }
+      .truncate {
+        max-width: 360px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        .card {
+          box-shadow: none !important;
+        }
+        body {
+          background: #fff;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-scroller">
+      <div class="container-fluidd">
+        <div class="">
+          <div class="content-wrapper">
+            <!-- Top actions -->
+            <div
+              class="d-flex flex-wrap align-items-center justify-content-between gap-2 no-print"
+            >
+              <div class="d-flex align-items-center gap-2">
+                <!-- <a
+                  href="javascript:history.back()"
+                  class="btn btn-outline-secondary btn-sm"
+                >
+                  <i class="mdi mdi-arrow-left"></i> Kembali
+                </a> -->
+                <button id="btnCopyUrl" class="btn btn-outline-primary btn-sm">
+                  <i class="mdi mdi-content-copy"></i> Salin URL Profil
+                </button>
+                <a
+                  id="btnDownloadQR"
+                  class="btn btn-outline-success btn-sm"
+                  download="qr-profil.png"
+                >
+                  <i class="mdi mdi-download"></i> Unduh QR
+                </a>
+                <button id="btnPrint" class="btn btn-outline-info btn-sm">
+                  <i class="mdi mdi-printer"></i> Cetak
+                </button>
+              </div>
+              <h4 class="mb-0">Profil Siswa</h4>
+            </div>
+
+            <!-- Profil + QR -->
+            <div class="row mt-3">
+              <div class="col-lg-8">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="section-title">Informasi Siswa</div>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <div class="stat-label">Nama Siswa</div>
+                        <div id="fNama" class="h5 mb-0">-</div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="stat-label">Jenis Kelamin</div>
+                        <div id="fJK">-</div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="stat-label">Kelas</div>
+                        <div id="fKelas">-</div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="stat-label">Tempat & Tanggal Lahir</div>
+                        <div id="fTTL" class="truncate">-</div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="stat-label">Alamat</div>
+                        <div id="fAlamat" class="truncate">-</div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="stat-label">Kontak Siswa</div>
+                        <div id="fTelp">-</div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="stat-label">Ortu/Wali</div>
+                        <div id="fOrtu">-</div>
+                        <div id="fTelpOrtu" class="text-muted small"></div>
+                      </div>
+
+                      <div class="col-12">
+                        <div class="stat-label">Instrumen</div>
+                        <div id="fInstrumen">-</div>
+                      </div>
+                      <div class="col-12">
+                        <div class="stat-label">Genre</div>
+                        <div id="fGenre">-</div>
+                      </div>
+                      <div class="col-12">
+                        <div class="stat-label">Paket</div>
+                        <div id="fPaket">-</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="card">
+                  <div class="card-body text-center">
+                    <div class="section-title">QR Profil</div>
+                    <img
+                      id="qrImg"
+                      class="qr-img mb-2"
+                      src=""
+                      alt="QR Profil"
+                    />
+                    <div class="text-muted small mb-2 truncate">
+                      <a
+                        id="profileUrlA"
+                        href="#"
+                        target="_blank"
+                        rel="noopener"
+                        >-</a
+                      >
+                    </div>
+                    <div class="text-muted small">
+                      Scan untuk melihat profil & nilai siswa.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Riwayat Nilai -->
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-body">
+                    <div
+                      class="d-flex align-items-center justify-content-between"
+                    >
+                      <div class="section-title mb-0">Riwayat Nilai</div>
+                      <small id="countNilai" class="text-muted"></small>
+                    </div>
+                    <div class="table-responsive mt-2">
+                      <table
+                        id="nilaiTable"
+                        class="table table-striped table-hover align-middle"
+                      >
+                        <thead class="table-secondary">
+                          <tr>
+                            <th>#</th>
+                            <th>Tanggal</th>
+                            <th>Instrumen</th>
+                            <th>Instruktur</th>
+                            <th>Nilai</th>
+                            <th>Materi</th>
+                            <th>Tautan</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                    <small class="text-muted">Urut dari yang terbaru.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="footer">
+            <div
+              class="d-sm-flex justify-content-center justify-content-sm-between"
+            >
+              <span
+                class="text-muted d-block text-center text-sm-left d-sm-inline-block"
+                >Copyright © 2025</span
+              >
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendor JS -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- App -->
+    <script type="module">
+      import {
+        onAuthStateChangedHandler,
+        signOut,
+        getStudent,
+        onNilaiSnapshot,
+      } from "./firebase.js";
+
+      // ===== Auth guard + profile =====
+      const profileName = document.getElementById("profileName");
+      const profilePhoto = document.getElementById("profilePhoto");
+      const logoutBtn = document.getElementById("logoutBtn");
+      onAuthStateChangedHandler((user) => {
+        if (user) {
+          profileName.textContent =
+            user.displayName || user.email || "Pengguna";
+          if (user.photoURL) profilePhoto.src = user.photoURL;
+        } else {
+          // window.location.href = "login.html";
+          profileName.textContent = "Pengguna";
+          profilePhoto.src = "assets/images/faces/face15.jpg";
+        }
+      });
+      logoutBtn?.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const q = await Swal.fire({
+          title: "Log out?",
+          icon: "question",
+          showCancelButton: true,
+        });
+        if (q.isConfirmed) await signOut();
+      });
+
+      // ===== Helpers =====
+      function qs(name) {
+        const url = new URL(location.href);
+        return url.searchParams.get(name);
+      }
+      function arr(x) {
+        return Array.isArray(x) ? x : x ? [x] : [];
+      }
+      function chips(el, items) {
+        el.innerHTML = items.length
+          ? items.map((v) => `<span class="chip">${v}</span>`).join(" ")
+          : "-";
+      }
+      function buildProfileUrl(id) {
+        const base = `${location.origin}${location.pathname.replace(
+          /[^/]+$/,
+          ""
+        )}`;
+        return `${base}profile.html?id=${encodeURIComponent(id)}`;
+      }
+      function buildQrUrl(dataUrl) {
+        const encoded = encodeURIComponent(dataUrl);
+        return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encoded}`;
+      }
+      function toTTL(tempat, tanggal) {
+        if (!tempat && !tanggal) return "-";
+        if (tempat && tanggal) return `${tempat}, ${tanggal}`;
+        return tempat || tanggal || "-";
+      }
+      function materiHtml(m) {
+        const a = arr(m);
+        return a.length
+          ? a.map((v) => `<span class="chip">${v}</span>`).join(" ")
+          : "-";
+      }
+      function tautanHtml(t) {
+        const a = arr(t);
+        return a.length
+          ? a
+              .map(
+                (v) => `<a href="${v}" target="_blank" rel="noopener">${v}</a>`
+              )
+              .join("<br/>")
+          : "-";
+      }
+
+      // ===== Elements =====
+      const fNama = document.getElementById("fNama");
+      const fJK = document.getElementById("fJK");
+      const fKelas = document.getElementById("fKelas");
+      const fTTL = document.getElementById("fTTL");
+      const fAlamat = document.getElementById("fAlamat");
+      const fTelp = document.getElementById("fTelp");
+      const fOrtu = document.getElementById("fOrtu");
+      const fTelpOrtu = document.getElementById("fTelpOrtu");
+      const fInstrumen = document.getElementById("fInstrumen");
+      const fGenre = document.getElementById("fGenre");
+      const fPaket = document.getElementById("fPaket");
+
+      const qrImg = document.getElementById("qrImg");
+      const profileUrlA = document.getElementById("profileUrlA");
+      const btnCopyUrl = document.getElementById("btnCopyUrl");
+      const btnDownloadQR = document.getElementById("btnDownloadQR");
+      const btnPrint = document.getElementById("btnPrint");
+
+      const nilaiTbody = document.querySelector("#nilaiTable tbody");
+      const countNilai = document.getElementById("countNilai");
+
+      // ===== Main =====
+      const siswaId = qs("id");
+      if (!siswaId) {
+        Swal.fire(
+          "Profil tidak valid",
+          "Parameter ?id tidak ditemukan.",
+          "error"
+        );
+      } else {
+        // Profil siswa
+        const s = await getStudent(siswaId);
+        if (!s) {
+          Swal.fire("Tidak ditemukan", "Siswa tidak ditemukan.", "warning");
+        } else {
+          document.title = `CADENZA — ${s.namaSiswa || "Profil Siswa"}`;
+          fNama.textContent = s.namaSiswa || "-";
+          fJK.textContent = s.jenisKelamin || "-";
+          fKelas.textContent = s.kelas || "-";
+          fTTL.textContent = toTTL(s.tempatLahir, s.tanggalLahir);
+          fAlamat.textContent = s.alamat || "-";
+          fTelp.textContent = s.noTelepon || "-";
+          fOrtu.textContent = s.namaOrtu || "-";
+          fTelpOrtu.textContent = s.noTeleponOrtu || "";
+          chips(fInstrumen, arr(s.pilihanIstrumen));
+          chips(fGenre, arr(s.pilihanGenre));
+          chips(fPaket, arr(s.pilihanPaket));
+
+          // QR & URL profil
+          const pUrl = buildProfileUrl(siswaId);
+          const qUrl = buildQrUrl(pUrl);
+          profileUrlA.href = pUrl;
+          profileUrlA.textContent = pUrl;
+          qrImg.src = qUrl;
+          btnDownloadQR.href = qUrl;
+
+          btnCopyUrl.addEventListener("click", async () => {
+            try {
+              await navigator.clipboard.writeText(pUrl);
+              Swal.fire(
+                "Tersalin",
+                "URL profil disalin ke clipboard.",
+                "success"
+              );
+            } catch {
+              Swal.fire("Gagal", "Tidak dapat menyalin URL.", "error");
+            }
+          });
+          btnPrint.addEventListener("click", () => window.print());
+
+          // Nilai siswa (filter client-side dari snapshot)
+          onNilaiSnapshot((rows) => {
+            const mine = rows
+              .filter((r) => r.siswaId === siswaId)
+              .sort(
+                (a, b) =>
+                  (Date.parse(b.tanggal || "") || 0) -
+                  (Date.parse(a.tanggal || "") || 0)
+              );
+
+            countNilai.textContent = `${mine.length} catatan`;
+
+            nilaiTbody.innerHTML = "";
+            mine.forEach((r, i) => {
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                <td>${i + 1}</td>
+                <td>${r.tanggal || "-"}</td>
+                <td>${r.instrumen || "-"}</td>
+                <td>${r.instruktur || "-"}</td>
+                <td>${typeof r.nilai === "number" ? r.nilai : "-"}</td>
+                <td>${materiHtml(r.materi)}</td>
+                <td class="truncate">${tautanHtml(r.tautan)}</td>
+              `;
+              nilaiTbody.appendChild(tr);
+            });
+          });
+        }
+      }
+    </script>
+
+    <!-- Optional libs -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/startbootstrap/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
+  </body>
+</html>

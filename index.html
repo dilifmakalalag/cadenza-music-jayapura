@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CADENZA — Dashboard</title>
+
+    <!-- Vendor CSS -->
+    <link
+      rel="stylesheet"
+      href="assets/vendors/mdi/css/materialdesignicons.min.css"
+    />
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css" />
+    <link
+      rel="stylesheet"
+      href="assets/vendors/jvectormap/jquery-jvectormap.css"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/vendors/flag-icon-css/css/flag-icon.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/vendors/owl-carousel-2/owl.carousel.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/vendors/owl-carousel-2/owl.theme.default.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="shortcut icon" href="assets/images/favicon.png" />
+    <style>
+      .card .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .stat-sub {
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-scroller">
+      <!-- Sidebar (samakan dengan data-siswa) -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <div
+          class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top"
+        >
+          <a class="sidebar-brand brand-logo text-white" href="index.html"
+            >CADENZA</a
+          >
+          <a class="sidebar-brand brand-logo-mini" href="index.html"
+            ><img src="assets/images/logo-mini.svg" alt="logo"
+          /></a>
+        </div>
+        <ul class="nav">
+          <li class="nav-item nav-category">
+            <span class="nav-link">Menu</span>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link active" href="index.html">
+              <span class="menu-icon"><i class="mdi mdi-speedometer"></i></span>
+              <span class="menu-title">Beranda</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-siswa.html">
+              <span class="menu-icon"
+                ><i class="mdi mdi-account-group"></i
+              ></span>
+              <span class="menu-title">Data Siswa</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-nilai.html">
+              <span class="menu-icon"
+                ><i class="mdi mdi-clipboard-text"></i
+              ></span>
+              <span class="menu-title">Data Nilai</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-qr.html">
+              <span class="menu-icon"><i class="mdi mdi-qrcode"></i></span>
+              <span class="menu-title">Data QR</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- page-body-wrapper -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- Navbar (burger + profile tetap) -->
+        <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div
+            class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center"
+          >
+            <a class="navbar-brand brand-logo-mini" href="index.html"
+              ><img src="assets/images/logo-mini.svg" alt="logo"
+            /></a>
+          </div>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+            <button
+              class="navbar-toggler navbar-toggler align-self-center"
+              type="button"
+              data-toggle="minimize"
+            >
+              <span class="mdi mdi-menu"></span>
+            </button>
+            <ul class="navbar-nav w-100"></ul>
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link"
+                  id="profileDropdown"
+                  href="#"
+                  data-toggle="dropdown"
+                >
+                  <div class="navbar-profile d-flex align-items-center">
+                    <img
+                      id="profilePhoto"
+                      class="img-xs rounded-circle me-2"
+                      src="assets/images/faces/face15.jpg"
+                      alt=""
+                    />
+                    <p
+                      id="profileName"
+                      class="mb-0 d-none d-sm-block navbar-profile-name"
+                    >
+                      .....
+                    </p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                  </div>
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                  aria-labelledby="profileDropdown"
+                >
+                  <div class="dropdown-divider"></div>
+                  <a id="logoutBtn" class="dropdown-item preview-item" href="#">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-logout text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Log out</p>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+            <button
+              class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
+              type="button"
+              data-toggle="offcanvas"
+            >
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- main-panel -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <h5 class="mb-3">Dashboard</h5>
+
+            <!-- Cards disesuaikan dengan menu sidebar -->
+            <div class="row">
+              <!-- Total Siswa -->
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center">
+                          <h3 id="cardTotalSiswa" class="mb-0 stat-value">0</h3>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-account-group icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">Total Siswa</h6>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Total Nilai Terekam -->
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center">
+                          <h3 id="cardTotalNilai" class="mb-0 stat-value">0</h3>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-clipboard-text icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">
+                      Total Nilai Terekam
+                    </h6>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Total QR Terbit -->
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center">
+                          <h3 id="cardTotalQR" class="mb-0 stat-value">0</h3>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-qrcode icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">
+                      Total QR Terbit
+                    </h6>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Paket Dominan -->
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center">
+                          <h3 id="cardPaketFavorit" class="mb-0 stat-value">
+                            -
+                          </h3>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-star-circle icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">
+                      Paket Paling Banyak Dipilih
+                    </h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ruang konten lain… -->
+          </div>
+
+          <footer class="footer">
+            <div
+              class="d-sm-flex justify-content-center justify-content-sm-between"
+            >
+              <span
+                class="text-muted d-block text-center text-sm-left d-sm-inline-block"
+                >Copyright © 2025</span
+              >
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <!-- plugins:js -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="assets/vendors/chart.js/Chart.min.js"></script>
+    <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
+    <script src="assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
+    <script src="assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="assets/vendors/owl-carousel-2/owl.carousel.min.js"></script>
+    <script src="assets/js/off-canvas.js"></script>
+    <script src="assets/js/hoverable-collapse.js"></script>
+    <script src="assets/js/misc.js"></script>
+    <script src="assets/js/settings.js"></script>
+    <script src="assets/js/todolist.js"></script>
+
+    <!-- Firebase app logic (auth guard + load angka kartu) -->
+    <script type="module">
+      import {
+        onAuthStateChangedHandler,
+        signOut,
+        // (opsional) tambahkan fungsi agregasi untuk mengisi kartu di dashboard
+        // e.g. countStudents, countGrades, countQR
+      } from "./firebase.js";
+
+      const profileName = document.getElementById("profileName");
+      const profilePhoto = document.getElementById("profilePhoto");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      // Guard & profile binding
+      onAuthStateChangedHandler((user) => {
+        if (user) {
+          profileName.textContent =
+            user.displayName || user.email || "Pengguna";
+          if (user.photoURL) profilePhoto.src = user.photoURL;
+        } else {
+          // window.location.href = "login.html";
+          profileName.textContent = ".....";
+          profilePhoto.src = "assets/images/faces/face15.jpg";
+        }
+      });
+
+      logoutBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const ask = await Swal.fire({
+          title: "Log out?",
+          text: "Kamu akan keluar dari sesi ini.",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Keluar",
+          cancelButtonText: "Batal",
+        });
+        if (ask.isConfirmed) await signOut();
+      });
+
+      // ====== Placeholder pengisian kartu dashboard ======
+      // Silakan isi dengan query Firestore sesuai koleksi kamu.
+      // document.getElementById('cardTotalSiswa').textContent = totalSiswa;
+      // document.getElementById('cardTotalNilai').textContent = totalNilai;
+      // document.getElementById('cardTotalQR').textContent = totalQR;
+      // document.getElementById('cardPaketFavorit').textContent = namaPaket;
+    </script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Bootstrap & others -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/startbootstrap/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
+  </body>
+</html>

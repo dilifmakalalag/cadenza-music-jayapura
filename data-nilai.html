@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CADENZA — Data Nilai (Resital)</title>
+
+    <!-- Vendor CSS -->
+    <link
+      rel="stylesheet"
+      href="assets/vendors/mdi/css/materialdesignicons.min.css"
+    />
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="shortcut icon" href="assets/images/favicon.png" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      #nilaiTable thead {
+        background-color: var(--bs-secondary);
+        color: #fff;
+      }
+      .table td,
+      .table th {
+        vertical-align: middle;
+      }
+      .form-control,
+      .form-select,
+      .form-control:focus,
+      .form-select:focus {
+        color: #fff;
+        background: #2b2f32;
+        border-color: rgba(255, 255, 255, 0.25);
+      }
+      .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--bs-secondary);
+        box-shadow: 0 0 0 0.2rem rgba(var(--bs-secondary-rgb), 0.25);
+      }
+      .chip {
+        display: inline-block;
+        padding: 0.15rem 0.5rem;
+        border-radius: 999px;
+        background: rgba(108, 117, 125, 0.2);
+        margin: 0 0.25rem 0.25rem 0;
+      }
+      .filter-wrap .form-select,
+      .filter-wrap .form-control {
+        min-width: 160px;
+      }
+      .nowrap {
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-scroller">
+      <!-- Sidebar -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <div
+          class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top"
+        >
+          <a
+            class="sidebar-brand brand-logo text-white fw-bold"
+            href="index.html"
+            >CADENZA</a
+          >
+          <a class="sidebar-brand brand-logo-mini" href="index.html"
+            ><img src="assets/images/logo-mini.svg" alt="logo"
+          /></a>
+        </div>
+        <ul class="nav">
+          <li class="nav-item nav-category">
+            <span class="nav-link">Menu</span>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="index.html"
+              ><span class="menu-icon"><i class="mdi mdi-speedometer"></i></span
+              ><span class="menu-title">Beranda</span></a
+            >
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-siswa.html"
+              ><span class="menu-icon"
+                ><i class="mdi mdi-account-group"></i></span
+              ><span class="menu-title">Data Siswa</span></a
+            >
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link active" href="data-nilai.html"
+              ><span class="menu-icon"
+                ><i class="mdi mdi-clipboard-text"></i></span
+              ><span class="menu-title">Data Nilai</span></a
+            >
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-qr.html"
+              ><span class="menu-icon"><i class="mdi mdi-qrcode"></i></span
+              ><span class="menu-title">Data QR</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+
+      <div class="container-fluid page-body-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div
+            class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center"
+          >
+            <a class="navbar-brand brand-logo-mini" href="index.html"
+              ><img src="assets/images/logo-mini.svg" alt="logo"
+            /></a>
+          </div>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+            <button
+              class="navbar-toggler navbar-toggler align-self-center"
+              type="button"
+              data-toggle="minimize"
+            >
+              <span class="mdi mdi-menu"></span>
+            </button>
+            <ul class="navbar-nav w-100"></ul>
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link"
+                  id="profileDropdown"
+                  href="#"
+                  data-toggle="dropdown"
+                >
+                  <div class="navbar-profile d-flex align-items-center">
+                    <img
+                      id="profilePhoto"
+                      class="img-xs rounded-circle me-2"
+                      src="assets/images/faces/face15.jpg"
+                      alt=""
+                    />
+                    <p
+                      id="profileName"
+                      class="mb-0 d-none d-sm-block navbar-profile-name"
+                    >
+                      Pengguna
+                    </p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block ms-1"></i>
+                  </div>
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                  aria-labelledby="profileDropdown"
+                >
+                  <div class="dropdown-divider"></div>
+                  <a id="logoutBtn" class="dropdown-item preview-item" href="#">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-logout text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Log out</p>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+            <button
+              class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
+              type="button"
+              data-toggle="offcanvas"
+            >
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
+          </div>
+        </nav>
+
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div
+              class="d-flex flex-wrap align-items-center justify-content-between gap-2"
+            >
+              <h4 class="mb-0">Data Nilai (Ujian/Resital)</h4>
+              <div class="row w-100 g-2 align-items-center filter-wrap">
+                <div class="col-auto">
+                  <select
+                    id="filterInstruktur"
+                    class="form-control form-select"
+                  >
+                    <option value="">Semua Instruktur</option>
+                  </select>
+                </div>
+                <div class="col-auto">
+                  <select id="filterInstrumen" class="form-control form-select">
+                    <option value="">Semua Instrumen</option>
+                  </select>
+                </div>
+                <div class="col-auto d-flex gap-2 align-items-center nowrap">
+                  <input id="filterStart" type="date" class="form-control" />
+                  <span class="text-muted small">s/d</span>
+                  <input id="filterEnd" type="date" class="form-control" />
+                </div>
+                <div class="col-auto">
+                  <button id="btnAdd" class="btn btn-sm btn-primary">
+                    <i class="mdi mdi-plus"></i> Tambah Nilai Resital
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table
+                        id="nilaiTable"
+                        class="table table-striped table-hover align-middle"
+                      >
+                        <thead class="table-secondary">
+                          <tr>
+                            <th>#</th>
+                            <th>Nama Siswa</th>
+                            <th>Instrumen</th>
+                            <th>Materi</th>
+                            <th>Predikat</th>
+                            <th>Instruktur</th>
+                            <th>Tanggal</th>
+                            <th>Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                    <small class="text-muted">
+                      Format menyesuaikan daftar resital; materi boleh lebih
+                      dari satu (satu baris per lagu).
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal Nilai -->
+            <div
+              class="modal fade"
+              id="nilaiModal"
+              tabindex="-1"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                  <form id="nilaiForm" novalidate>
+                    <div class="modal-header">
+                      <h5 class="modal-title">Tambah / Edit Nilai Resital</h5>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                      ></button>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" id="nilaiId" />
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <label for="siswaId" class="form-label"
+                            >Nama Siswa</label
+                          >
+                          <select
+                            id="siswaId"
+                            class="form-control form-select"
+                            required
+                          >
+                            <option value="">Pilih siswa...</option>
+                          </select>
+                          <div class="invalid-feedback">Pilih siswa.</div>
+                        </div>
+
+                        <div class="col-md-3">
+                          <label for="instrumen" class="form-label"
+                            >Instrumen</label
+                          >
+                          <select
+                            id="instrumen"
+                            class="form-control form-select"
+                            required
+                          >
+                            <option value="">Pilih...</option>
+                            <option value="Piano">Piano</option>
+                            <option value="Keyboard">Keyboard</option>
+                            <option value="Biola">Biola</option>
+                            <option value="Drum">Drum</option>
+                            <option value="Vokal">Vokal</option>
+                          </select>
+                          <div class="invalid-feedback">Pilih instrumen.</div>
+                        </div>
+
+                        <div class="col-md-3">
+                          <label for="tanggal" class="form-label"
+                            >Tanggal Ujian</label
+                          >
+                          <input
+                            type="date"
+                            id="tanggal"
+                            class="form-control"
+                            required
+                          />
+                          <div class="invalid-feedback">Tanggal wajib.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <label for="instruktur" class="form-label"
+                            >Instruktur</label
+                          >
+                          <input
+                            type="text"
+                            id="instruktur"
+                            class="form-control"
+                            placeholder="Misal: Mr. David / Ms. Indri"
+                            required
+                          />
+                          <div class="invalid-feedback">Instruktur wajib.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <label for="predikat" class="form-label"
+                            >Predikat</label
+                          >
+                          <select
+                            id="predikat"
+                            class="form-control form-select"
+                            required
+                          >
+                            <option value="">Pilih predikat...</option>
+                            <option value="Memuaskan">Memuaskan</option>
+                            <option value="Sangat Memuaskan">
+                              Sangat Memuaskan
+                            </option>
+                          </select>
+                          <div class="invalid-feedback">Pilih predikat.</div>
+                        </div>
+
+                        <div class="col-12">
+                          <label for="materi" class="form-label"
+                            >Materi (satu baris per lagu)</label
+                          >
+                          <textarea
+                            id="materi"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Contoh:
+• Domino (Jessi J)
+• Everybody's Changing (Keane)
+• Yellow (Coldplay)"
+                            required
+                          ></textarea>
+                          <div class="invalid-feedback">
+                            Minimal satu materi.
+                          </div>
+                          <div class="form-text">
+                            Gunakan baris terpisah untuk tiap lagu. Tanda “• ”
+                            opsional, akan dihapus otomatis.
+                          </div>
+                        </div>
+
+                        <div class="col-12">
+                          <label for="tautan" class="form-label"
+                            >Tautan Referensi (opsional, satu per baris)</label
+                          >
+                          <textarea
+                            id="tautan"
+                            class="form-control"
+                            rows="2"
+                            placeholder="https://...&#10;https://..."
+                          ></textarea>
+                          <div class="form-text">
+                            Jika ada link referensi (misal chord/partitur),
+                            tulis satu URL per baris.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Batal
+                      </button>
+                      <button type="submit" class="btn btn-primary">
+                        Simpan
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="footer">
+            <div
+              class="d-sm-flex justify-content-center justify-content-sm-between"
+            >
+              <span
+                class="text-muted d-block text-center text-sm-left d-sm-inline-block"
+                >Copyright © 2025</span
+              >
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendor JS -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- App -->
+    <script type="module">
+      import {
+        onAuthStateChangedHandler,
+        signOut,
+        onStudentsSnapshot,
+        onNilaiSnapshot,
+        getNilai,
+        addNilai,
+        updateNilai,
+        deleteNilai,
+      } from "./firebase.js";
+
+      // ===== Auth guard + profile =====
+      const profileName = document.getElementById("profileName");
+      const profilePhoto = document.getElementById("profilePhoto");
+      const logoutBtn = document.getElementById("logoutBtn");
+      onAuthStateChangedHandler((user) => {
+        if (user) {
+          profileName.textContent =
+            user.displayName || user.email || "Pengguna";
+          if (user.photoURL) profilePhoto.src = user.photoURL;
+        } else {
+          profileName.textContent = "Pengguna";
+          profilePhoto.src = "assets/images/faces/face15.jpg";
+        }
+      });
+      logoutBtn?.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const q = await Swal.fire({
+          title: "Log out?",
+          icon: "question",
+          showCancelButton: true,
+        });
+        if (q.isConfirmed) await signOut();
+      });
+
+      // ===== Elemen =====
+      const tbody = document.querySelector("#nilaiTable tbody");
+      const btnAdd = document.getElementById("btnAdd");
+      const modalEl = document.getElementById("nilaiModal");
+      const modal = new bootstrap.Modal(modalEl);
+      const form = document.getElementById("nilaiForm");
+
+      const nilaiId = document.getElementById("nilaiId");
+      const siswaId = document.getElementById("siswaId");
+      const instrumen = document.getElementById("instrumen");
+      const tanggal = document.getElementById("tanggal");
+      const instruktur = document.getElementById("instruktur");
+      const predikat = document.getElementById("predikat");
+      const materi = document.getElementById("materi");
+      const tautan = document.getElementById("tautan");
+
+      const filterInstruktur = document.getElementById("filterInstruktur");
+      const filterInstrumen = document.getElementById("filterInstrumen");
+      const filterStart = document.getElementById("filterStart");
+      const filterEnd = document.getElementById("filterEnd");
+
+      // ===== Dropdown siswa =====
+      const siswaMap = new Map();
+      onStudentsSnapshot((students) => {
+        siswaMap.clear();
+        siswaId.innerHTML = '<option value="">Pilih siswa...</option>';
+        students.forEach((s) => {
+          siswaMap.set(s.id, s.namaSiswa || "(tanpa nama)");
+          const opt = document.createElement("option");
+          opt.value = s.id;
+          opt.textContent = s.namaSiswa || s.id;
+          siswaId.appendChild(opt);
+        });
+      });
+
+      // helper parsing materi/tautan
+      function parseLines(text) {
+        return text
+          .split(/\r?\n/)
+          .map((s) => s.replace(/^\s*•\s*/, "").trim())
+          .filter(Boolean);
+      }
+
+      // simpan snapshot terakhir untuk filter client-side
+      let cacheRows = [];
+
+      // render table
+      function renderRows(rows) {
+        const setInstruktur = new Set([""]);
+        const setInstrumen = new Set([""]);
+
+        tbody.innerHTML = "";
+        rows.forEach((r, i) => {
+          setInstruktur.add(r.instruktur || "");
+          setInstrumen.add(r.instrumen || "");
+
+          const materiList = Array.isArray(r.materi)
+            ? r.materi
+            : r.materi
+            ? [r.materi]
+            : [];
+          const materiHtml = materiList.length
+            ? materiList.map((m) => `<span class="chip">${m}</span>`).join(" ")
+            : "";
+
+          const tr = document.createElement("tr");
+          tr.dataset.instruktur = (r.instruktur || "").toLowerCase();
+          tr.dataset.instrumen = (r.instrumen || "").toLowerCase();
+          tr.dataset.tanggal = r.tanggal || "";
+
+          tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${siswaMap.get(r.siswaId) || r.siswaId || ""}</td>
+            <td>${r.instrumen || ""}</td>
+            <td>${materiHtml}</td>
+            <td>${r.predikat || "-"}</td>
+            <td>${r.instruktur || ""}</td>
+            <td>${r.tanggal || ""}</td>
+            <td class="text-nowrap">
+              <button class="btn btn-sm btn-primary btn-edit" data-id="${
+                r.id
+              }">Edit</button>
+              <button class="btn btn-sm btn-danger btn-del" data-id="${
+                r.id
+              }">Hapus</button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+
+        // rebuild filter dropdown options
+        const curIns = filterInstruktur.value;
+        const curInstru = filterInstrumen.value;
+        filterInstruktur.innerHTML = "";
+        filterInstrumen.innerHTML = "";
+        [...setInstruktur].forEach((v) => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v || "Semua Instruktur";
+          filterInstruktur.appendChild(opt);
+        });
+        [...setInstrumen].forEach((v) => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v || "Semua Instrumen";
+          filterInstrumen.appendChild(opt);
+        });
+        filterInstruktur.value = curIns ?? "";
+        filterInstrumen.value = curInstru ?? "";
+
+        // bind tombol
+        document.querySelectorAll(".btn-edit").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.currentTarget.dataset.id;
+            const row = await getNilai(id);
+            if (!row)
+              return Swal.fire("Error", "Data tidak ditemukan", "error");
+            nilaiId.value = row.id;
+            siswaId.value = row.siswaId || "";
+            instrumen.value = row.instrumen || "";
+            tanggal.value = row.tanggal || "";
+            instruktur.value = row.instruktur || "";
+            predikat.value = row.predikat || "";
+            materi.value = (
+              Array.isArray(row.materi)
+                ? row.materi
+                : row.materi
+                ? [row.materi]
+                : []
+            ).join("\n");
+            tautan.value = (
+              Array.isArray(row.tautan)
+                ? row.tautan
+                : row.tautan
+                ? [row.tautan]
+                : []
+            ).join("\n");
+            modal.show();
+          });
+        });
+        document.querySelectorAll(".btn-del").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.currentTarget.dataset.id;
+            const ask = await Swal.fire({
+              title: "Hapus data?",
+              icon: "warning",
+              showCancelButton: true,
+            });
+            if (!ask.isConfirmed) return;
+            await deleteNilai(id);
+            Swal.fire("Dihapus", "Data nilai dihapus.", "success");
+          });
+        });
+
+        // terapkan filter saat ini
+        applyFilter();
+      }
+
+      // realtime
+      onNilaiSnapshot((rows) => {
+        cacheRows = rows;
+        renderRows(rows);
+      });
+
+      // filter
+      function parseDate(s) {
+        const t = Date.parse(s);
+        return isNaN(t) ? null : new Date(t);
+      }
+
+      function applyFilter() {
+        const fIns = filterInstruktur.value.toLowerCase();
+        const fInstru = filterInstrumen.value.toLowerCase();
+        const start = filterStart.value ? parseDate(filterStart.value) : null;
+        const end = filterEnd.value ? parseDate(filterEnd.value) : null;
+
+        document.querySelectorAll("#nilaiTable tbody tr").forEach((tr) => {
+          const okIns = !fIns || tr.dataset.instruktur === fIns;
+          const okInstru = !fInstru || tr.dataset.instrumen === fInstru;
+
+          const tStr = tr.dataset.tanggal || "";
+          const tVal = parseDate(tStr);
+          let okDate = true;
+          if (start && (!tVal || tVal < start)) okDate = false;
+          if (end) {
+            // buat end inclusive (set jam 23:59:59)
+            const endInc = new Date(end);
+            endInc.setHours(23, 59, 59, 999);
+            if (!tVal || tVal > endInc) okDate = false;
+          }
+
+          tr.style.display = okIns && okInstru && okDate ? "" : "none";
+        });
+      }
+      filterInstruktur.addEventListener("change", applyFilter);
+      filterInstrumen.addEventListener("change", applyFilter);
+      filterStart.addEventListener("change", applyFilter);
+      filterEnd.addEventListener("change", applyFilter);
+
+      // add
+      btnAdd.addEventListener("click", () => {
+        form.reset();
+        nilaiId.value = "";
+        modal.show();
+      });
+
+      // submit
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.classList.add("was-validated");
+          return;
+        }
+
+        const materiArr = parseLines(materi.value);
+        const tautanArr = parseLines(tautan.value).filter((url) =>
+          /^https?:\/\//i.test(url)
+        );
+
+        if (materiArr.length === 0) {
+          materi.focus();
+          return Swal.fire("Validasi", "Minimal satu materi.", "warning");
+        }
+
+        const payload = {
+          siswaId: siswaId.value,
+          instrumen: instrumen.value,
+          tanggal: tanggal.value,
+          instruktur: instruktur.value.trim(),
+          predikat: predikat.value, // <-- simpan predikat
+          materi: materiArr, // simpan sebagai array
+          tautan: tautanArr.length ? tautanArr : null,
+        };
+
+        const id = nilaiId.value;
+        Swal.showLoading();
+        try {
+          if (id) {
+            await updateNilai(id, payload);
+            Swal.fire("Berhasil", "Nilai resital diperbarui.", "success");
+          } else {
+            await addNilai(payload);
+            Swal.fire("Berhasil", "Nilai resital ditambahkan.", "success");
+          }
+          const inst = bootstrap.Modal.getInstance(modalEl);
+          if (inst) inst.hide();
+          form.reset();
+        } catch (err) {
+          Swal.fire("Gagal", "Tidak dapat menyimpan.", "error");
+        }
+      });
+    </script>
+
+    <!-- Optional libs -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/startbootstrap/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
+  </body>
+</html>

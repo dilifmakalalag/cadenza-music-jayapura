@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CADENZA — Data Siswa</title>
+
+    <!-- Vendor CSS -->
+    <link
+      rel="stylesheet"
+      href="assets/vendors/mdi/css/materialdesignicons.min.css"
+    />
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="shortcut icon" href="assets/images/favicon.png" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      /* Tabel */
+      #studentsTable thead {
+        background-color: var(--bs-secondary);
+        color: #fff;
+      }
+      .table td,
+      .table th {
+        vertical-align: middle;
+      }
+
+      /* Form look */
+      .form-control,
+      .form-select,
+      .form-control:focus,
+      .form-select:focus {
+        color: #fff;
+        background: #2b2f32;
+        border-color: rgba(255, 255, 255, 0.25);
+      }
+      .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--bs-secondary);
+        box-shadow: 0 0 0 0.2rem rgba(var(--bs-secondary-rgb), 0.25);
+      }
+      .form-text {
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .small-muted {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-scroller">
+      <!-- Sidebar -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <div
+          class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top"
+        >
+          <a
+            class="sidebar-brand brand-logo text-white fw-bold"
+            href="index.html"
+            >CADENZA</a
+          >
+          <a class="sidebar-brand brand-logo-mini" href="index.html"
+            ><img src="assets/images/logo-mini.svg" alt="logo"
+          /></a>
+        </div>
+        <ul class="nav">
+          <li class="nav-item nav-category">
+            <span class="nav-link">Menu</span>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="index.html">
+              <span class="menu-icon"><i class="mdi mdi-speedometer"></i></span>
+              <span class="menu-title">Beranda</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link active" href="data-siswa.html">
+              <span class="menu-icon"
+                ><i class="mdi mdi-account-group"></i
+              ></span>
+              <span class="menu-title">Data Siswa</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-nilai.html">
+              <span class="menu-icon"
+                ><i class="mdi mdi-clipboard-text"></i
+              ></span>
+              <span class="menu-title">Data Nilai</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-qr.html">
+              <span class="menu-icon"><i class="mdi mdi-qrcode"></i></span>
+              <span class="menu-title">Data QR</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Page content -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div
+            class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center"
+          >
+            <a class="navbar-brand brand-logo-mini" href="index.html"
+              ><img src="assets/images/logo-mini.svg" alt="logo"
+            /></a>
+          </div>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+            <!-- Burger / toggler -->
+            <button
+              class="navbar-toggler navbar-toggler align-self-center"
+              type="button"
+              data-toggle="minimize"
+            >
+              <span class="mdi mdi-menu"></span>
+            </button>
+
+            <ul class="navbar-nav w-100"></ul>
+
+            <!-- Profile login -->
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link"
+                  id="profileDropdown"
+                  href="#"
+                  data-toggle="dropdown"
+                >
+                  <div class="navbar-profile d-flex align-items-center">
+                    <img
+                      id="profilePhoto"
+                      class="img-xs rounded-circle me-2"
+                      src="assets/images/faces/face15.jpg"
+                      alt=""
+                    />
+                    <p
+                      id="profileName"
+                      class="mb-0 d-none d-sm-block navbar-profile-name"
+                    >
+                      Pengguna
+                    </p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block ms-1"></i>
+                  </div>
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                  aria-labelledby="profileDropdown"
+                >
+                  <div class="dropdown-divider"></div>
+                  <a id="logoutBtn" class="dropdown-item preview-item" href="#">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-logout text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Log out</p>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+
+            <!-- Burger offcanvas (mobile) -->
+            <button
+              class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
+              type="button"
+              data-toggle="offcanvas"
+            >
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
+          </div>
+        </nav>
+
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div
+              class="d-flex align-items-center justify-content-between flex-wrap gap-2"
+            >
+              <h4 class="mb-0">Data Siswa</h4>
+              <div class="d-flex gap-2">
+                <button id="btnImportExcel" class="btn btn-sm btn-outline-info">
+                  <i class="mdi mdi-file-import"></i> Import Excel
+                </button>
+                <button
+                  id="btnExportExcel"
+                  class="btn btn-sm btn-outline-success"
+                >
+                  <i class="mdi mdi-file-excel"></i> Export Excel
+                </button>
+                <button id="btnAddStudent" class="btn btn-sm btn-primary">
+                  <i class="mdi mdi-plus"></i> Tambah Siswa
+                </button>
+              </div>
+            </div>
+            <div class="small-muted mt-2">
+              Import menerima file .xlsx. Kolom “Timestamp” (jika ada) akan
+              diabaikan otomatis.
+            </div>
+
+            <!-- hidden file input -->
+            <input
+              id="fileInput"
+              type="file"
+              accept=".xlsx,.xls"
+              class="d-none"
+            />
+
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table
+                        id="studentsTable"
+                        class="table table-striped table-hover align-middle"
+                      >
+                        <thead class="table-secondary">
+                          <tr>
+                            <th>#</th>
+                            <th>Nama</th>
+                            <th>Tempat Lahir</th>
+                            <th>Tanggal Lahir</th>
+                            <th>Jenis Kelamin</th>
+                            <th>Alamat</th>
+                            <th>No. Telepon</th>
+                            <th>Nama Ortu/Wali</th>
+                            <th>No. Telp Ortu/Wali</th>
+                            <th>Istrumen</th>
+                            <th>Genre</th>
+                            <th>Kelas</th>
+                            <th>Paket</th>
+                            <th>Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal Form -->
+            <div
+              class="modal fade"
+              id="studentModal"
+              tabindex="-1"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                  <form id="studentForm" novalidate>
+                    <div class="modal-header">
+                      <h5 class="modal-title">Tambah / Edit Siswa</h5>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                      ></button>
+                    </div>
+
+                    <div class="modal-body">
+                      <input type="hidden" id="studentId" />
+                      <div class="row g-3">
+                        <!-- HURUF SAJA -->
+                        <div class="col-md-6">
+                          <label for="namaSiswa" class="form-label"
+                            >Nama Siswa</label
+                          >
+                          <input
+                            type="text"
+                            id="namaSiswa"
+                            class="form-control"
+                            required
+                            pattern="^[A-Za-zÀ-ž\s]+$"
+                            title="Hanya huruf dan spasi"
+                          />
+                          <div class="invalid-feedback">
+                            Nama hanya boleh huruf.
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="tempatLahir" class="form-label"
+                            >Tempat Lahir</label
+                          >
+                          <input
+                            type="text"
+                            id="tempatLahir"
+                            class="form-control"
+                            required
+                            pattern="^[A-Za-zÀ-ž\s]+$"
+                            title="Hanya huruf dan spasi"
+                          />
+                          <div class="invalid-feedback">
+                            Tempat lahir hanya huruf.
+                          </div>
+                        </div>
+
+                        <!-- Tanggal / Jenis Kelamin / Kelas -->
+                        <div class="col-md-4">
+                          <label for="tanggalLahir" class="form-label"
+                            >Tanggal Lahir</label
+                          >
+                          <input
+                            type="date"
+                            id="tanggalLahir"
+                            class="form-control"
+                            required
+                          />
+                          <div class="invalid-feedback">
+                            Tanggal lahir wajib.
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <label for="jenisKelamin" class="form-label"
+                            >Jenis Kelamin</label
+                          >
+                          <select
+                            id="jenisKelamin"
+                            class="form-control form-select"
+                            required
+                          >
+                            <option value="">Pilih...</option>
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                            <option value="Lainnya">Lainnya</option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Pilih jenis kelamin.
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <label for="kelas" class="form-label">Kelas</label>
+                          <select
+                            id="kelas"
+                            class="form-control form-select"
+                            required
+                          >
+                            <option value="">Pilih...</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                          </select>
+                          <div class="invalid-feedback">Pilih kelas.</div>
+                        </div>
+
+                        <!-- Alamat -->
+                        <div class="col-12">
+                          <label for="alamat" class="form-label">Alamat</label>
+                          <textarea
+                            id="alamat"
+                            class="form-control"
+                            rows="2"
+                            required
+                          ></textarea>
+                          <div class="invalid-feedback">
+                            Alamat wajib diisi.
+                          </div>
+                        </div>
+
+                        <!-- ANGKA SAJA -->
+                        <div class="col-md-6">
+                          <label for="noTelepon" class="form-label"
+                            >No. Telepon</label
+                          >
+                          <input
+                            type="text"
+                            id="noTelepon"
+                            class="form-control"
+                            required
+                            pattern="^[0-9]{8,20}$"
+                            title="Hanya angka 8–20 digit"
+                          />
+                          <div class="invalid-feedback">
+                            Masukkan angka 8–20 digit.
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="namaOrtu" class="form-label"
+                            >Nama Ortu/Wali</label
+                          >
+                          <input
+                            type="text"
+                            id="namaOrtu"
+                            class="form-control"
+                            required
+                            pattern="^[A-Za-zÀ-ž\s]+$"
+                            title="Hanya huruf dan spasi"
+                          />
+                          <div class="invalid-feedback">
+                            Nama ortu hanya huruf.
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="noTeleponOrtu" class="form-label"
+                            >No. Telepon Ortu/Wali</label
+                          >
+                          <input
+                            type="text"
+                            id="noTeleponOrtu"
+                            class="form-control"
+                            required
+                            pattern="^[0-9]{8,20}$"
+                            title="Hanya angka 8–20 digit"
+                          />
+                          <div class="invalid-feedback">
+                            Masukkan angka 8–20 digit.
+                          </div>
+                        </div>
+
+                        <!-- MULTI-SELECT -->
+                        <div class="col-md-6">
+                          <label for="pilihanIstrumen" class="form-label"
+                            >Pilihan Istrumen</label
+                          >
+                          <select
+                            id="pilihanIstrumen"
+                            class="form-control form-select"
+                            multiple
+                            required
+                          >
+                            <option value="Gitar">Gitar</option>
+                            <option value="Piano">Piano</option>
+                            <option value="Biola">Biola</option>
+                            <option value="Drum">Drum</option>
+                          </select>
+                          <div class="form-text">
+                            Tahan Ctrl/⌘ untuk pilih lebih dari satu.
+                          </div>
+                          <div class="invalid-feedback">
+                            Pilih minimal satu instrumen.
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="pilihanGenre" class="form-label"
+                            >Pilihan Genre</label
+                          >
+                          <select
+                            id="pilihanGenre"
+                            class="form-control form-select"
+                            multiple
+                            required
+                          >
+                            <option value="Pop">Pop</option>
+                            <option value="Rock">Rock</option>
+                            <option value="Klasik">Klasik</option>
+                            <option value="Jazz">Jazz</option>
+                          </select>
+                          <div class="form-text">
+                            Tahan Ctrl/⌘ untuk pilih lebih dari satu.
+                          </div>
+                          <div class="invalid-feedback">
+                            Pilih minimal satu genre.
+                          </div>
+                        </div>
+
+                        <!-- Paket (single) -->
+                        <div class="col-md-6">
+                          <label for="pilihanPaket" class="form-label"
+                            >Paket Pertemuan</label
+                          >
+                          <select
+                            id="pilihanPaket"
+                            class="form-control form-select"
+                            required
+                          >
+                            <option value="">Pilih...</option>
+                            <option value="Reguler">Reguler</option>
+                            <option value="Intensif">Intensif</option>
+                            <option value="Masterclass">Masterclass</option>
+                          </select>
+                          <div class="invalid-feedback">Pilih paket.</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Batal
+                      </button>
+                      <button
+                        type="submit"
+                        id="saveStudentBtn"
+                        class="btn btn-primary"
+                      >
+                        Simpan
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="footer">
+            <div
+              class="d-sm-flex justify-content-center justify-content-sm-between"
+            >
+              <span
+                class="text-muted d-block text-center text-sm-left d-sm-inline-block"
+                >Copyright © 2025</span
+              >
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendor JS -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SheetJS for Excel import/export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- App logic -->
+    <script type="module">
+      import {
+        onStudentsSnapshot,
+        getStudent,
+        addStudent,
+        updateStudent,
+        deleteStudent,
+        onAuthStateChangedHandler,
+        signOut,
+      } from "./firebase.js";
+
+      const modalEl = document.getElementById("studentModal");
+      const modal = new bootstrap.Modal(modalEl);
+      const studentForm = document.getElementById("studentForm");
+      const tableBody = document.querySelector("#studentsTable tbody");
+      const studentIdInput = document.getElementById("studentId");
+      const btnExportExcel = document.getElementById("btnExportExcel");
+      const btnImportExcel = document.getElementById("btnImportExcel");
+      const fileInput = document.getElementById("fileInput");
+
+      // ===== Auth guard + profile =====
+      const profileName = document.getElementById("profileName");
+      const profilePhoto = document.getElementById("profilePhoto");
+      const logoutBtn = document.getElementById("logoutBtn");
+      onAuthStateChangedHandler((user) => {
+        if (user) {
+          profileName.textContent =
+            user.displayName || user.email || "Pengguna";
+          if (user.photoURL) profilePhoto.src = user.photoURL;
+        } else {
+          profileName.textContent = "Pengguna";
+          profilePhoto.src = "assets/images/faces/face15.jpg";
+        }
+      });
+      logoutBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const ask = await Swal.fire({
+          title: "Log out?",
+          text: "Kamu akan keluar dari sesi ini.",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Keluar",
+          cancelButtonText: "Batal",
+        });
+        if (ask.isConfirmed) {
+          await signOut();
+          Swal.fire("Berhasil", "Kamu sudah logout.", "success");
+        }
+      });
+
+      // ===== Helpers Multi-select =====
+      function getMultiSelectValues(selectEl) {
+        return Array.from(selectEl.selectedOptions).map((o) => o.value);
+      }
+      function setMultiSelectValues(selectEl, values = []) {
+        const set = new Set(values);
+        Array.from(selectEl.options).forEach(
+          (opt) => (opt.selected = set.has(opt.value))
+        );
+      }
+
+      // Fields
+      const namaSiswa = document.getElementById("namaSiswa");
+      const tempatLahir = document.getElementById("tempatLahir");
+      const tanggalLahir = document.getElementById("tanggalLahir");
+      const jenisKelamin = document.getElementById("jenisKelamin");
+      const kelas = document.getElementById("kelas");
+      const alamat = document.getElementById("alamat");
+      const noTelepon = document.getElementById("noTelepon");
+      const namaOrtu = document.getElementById("namaOrtu");
+      const noTeleponOrtu = document.getElementById("noTeleponOrtu");
+      const pilihanIstrumen = document.getElementById("pilihanIstrumen");
+      const pilihanGenre = document.getElementById("pilihanGenre");
+      const pilihanPaket = document.getElementById("pilihanPaket");
+
+      // Validasi realtime huruf/angka (opsional tetap dipertahankan)
+      const onlyLetters = /[^A-Za-zÀ-ž\s]/g;
+      const onlyNumbers = /[^0-9]/g;
+      [namaSiswa, tempatLahir, namaOrtu].forEach((el) => {
+        el.addEventListener(
+          "input",
+          () => (el.value = el.value.replace(onlyLetters, ""))
+        );
+      });
+      [noTelepon, noTeleponOrtu].forEach((el) => {
+        el.addEventListener(
+          "input",
+          () => (el.value = el.value.replace(onlyNumbers, ""))
+        );
+      });
+
+      // ===== Data cache untuk export/dedupe =====
+      let latestStudents = [];
+
+      // Render
+      function renderStudents(students) {
+        latestStudents = students; // simpan snapshot terakhir untuk Export/dupe-check
+        tableBody.innerHTML = "";
+        students.forEach((s, i) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${s.namaSiswa ?? ""}</td>
+            <td>${s.tempatLahir ?? ""}</td>
+            <td>${s.tanggalLahir ?? ""}</td>
+            <td>${s.jenisKelamin ?? ""}</td>
+            <td>${s.alamat ?? ""}</td>
+            <td>${s.noTelepon ?? ""}</td>
+            <td>${s.namaOrtu ?? ""}</td>
+            <td>${s.noTeleponOrtu ?? ""}</td>
+            <td>${
+              Array.isArray(s.pilihanIstrumen)
+                ? s.pilihanIstrumen.join(", ")
+                : s.pilihanIstrumen ?? ""
+            }</td>
+            <td>${
+              Array.isArray(s.pilihanGenre)
+                ? s.pilihanGenre.join(", ")
+                : s.pilihanGenre ?? ""
+            }</td>
+            <td>${s.kelas ?? ""}</td>
+            <td>${s.pilihanPaket ?? ""}</td>
+            <td class="text-nowrap">
+              <button class="btn btn-sm btn-primary btn-edit" data-id="${
+                s.id
+              }">Edit</button>
+              <button class="btn btn-sm btn-danger btn-delete" data-id="${
+                s.id
+              }">Hapus</button>
+            </td>`;
+          tableBody.appendChild(tr);
+        });
+
+        document.querySelectorAll(".btn-edit").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.currentTarget.dataset.id;
+            const data = await getStudent(id);
+            if (!data)
+              return Swal.fire("Error", "Data tidak ditemukan", "error");
+
+            studentIdInput.value = id;
+            namaSiswa.value = data.namaSiswa || "";
+            tempatLahir.value = data.tempatLahir || "";
+            tanggalLahir.value = data.tanggalLahir || "";
+            jenisKelamin.value = data.jenisKelamin || "";
+            kelas.value = data.kelas || "";
+            alamat.value = data.alamat || "";
+            noTelepon.value = data.noTelepon || "";
+            namaOrtu.value = data.namaOrtu || "";
+            noTeleponOrtu.value = data.noTeleponOrtu || "";
+            setMultiSelectValues(
+              pilihanIstrumen,
+              Array.isArray(data.pilihanIstrumen) ? data.pilihanIstrumen : []
+            );
+            setMultiSelectValues(
+              pilihanGenre,
+              Array.isArray(data.pilihanGenre) ? data.pilihanGenre : []
+            );
+            pilihanPaket.value = data.pilihanPaket || "";
+            modal.show();
+          });
+        });
+
+        document.querySelectorAll(".btn-delete").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.currentTarget.dataset.id;
+            const conf = await Swal.fire({
+              title: "Hapus data?",
+              text: "Tindakan ini tidak dapat dibatalkan.",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Ya, hapus",
+              cancelButtonText: "Batal",
+            });
+            if (!conf.isConfirmed) return;
+            await deleteStudent(id);
+            Swal.fire("Dihapus", "Data siswa berhasil dihapus.", "success");
+          });
+        });
+      }
+
+      // Add
+      document.getElementById("btnAddStudent").addEventListener("click", () => {
+        studentForm.reset();
+        studentIdInput.value = "";
+        setMultiSelectValues(pilihanIstrumen, []);
+        setMultiSelectValues(pilihanGenre, []);
+        modal.show();
+      });
+
+      // Submit
+      studentForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!studentForm.checkValidity()) {
+          studentForm.classList.add("was-validated");
+          return;
+        }
+        const payload = {
+          namaSiswa: namaSiswa.value.trim(),
+          tempatLahir: tempatLahir.value.trim(),
+          tanggalLahir: tanggalLahir.value,
+          jenisKelamin: jenisKelamin.value,
+          kelas: kelas.value,
+          alamat: alamat.value.trim(),
+          noTelepon: noTelepon.value.trim(),
+          namaOrtu: namaOrtu.value.trim(),
+          noTeleponOrtu: noTeleponOrtu.value.trim(),
+          pilihanIstrumen: getMultiSelectValues(pilihanIstrumen),
+          pilihanGenre: getMultiSelectValues(pilihanGenre),
+          pilihanPaket: pilihanPaket.value,
+        };
+        const id = studentIdInput.value;
+
+        Swal.showLoading();
+        try {
+          if (id) {
+            await updateStudent(id, payload);
+            Swal.fire("Berhasil", "Data siswa diperbarui.", "success");
+          } else {
+            await addStudent(payload);
+            Swal.fire("Berhasil", "Data siswa ditambahkan.", "success");
+          }
+          const inst = bootstrap.Modal.getInstance(modalEl);
+          if (inst) inst.hide();
+          studentForm.reset();
+          studentIdInput.value = "";
+        } catch (err) {
+          Swal.fire("Gagal", "Tidak dapat menyimpan data.", "error");
+        }
+      });
+
+      // Realtime
+      onStudentsSnapshot(renderStudents);
+
+      // ===== Export Excel =====
+      function toRow(s, i) {
+        return {
+          No: i + 1,
+          Nama: s.namaSiswa || "",
+          "Tempat Lahir": s.tempatLahir || "",
+          "Tanggal Lahir": s.tanggalLahir || "",
+          "Jenis Kelamin": s.jenisKelamin || "",
+          Alamat: s.alamat || "",
+          "No. Telepon": s.noTelepon || "",
+          "Nama Ortu/Wali": s.namaOrtu || "",
+          "No. Telp Ortu/Wali": s.noTeleponOrtu || "",
+          Instrumen: Array.isArray(s.pilihanIstrumen)
+            ? s.pilihanIstrumen.join(", ")
+            : s.pilihanIstrumen || "",
+          Genre: Array.isArray(s.pilihanGenre)
+            ? s.pilihanGenre.join(", ")
+            : s.pilihanGenre || "",
+          Kelas: s.kelas || "",
+          Paket: s.pilihanPaket || "",
+        };
+      }
+      btnExportExcel.addEventListener("click", () => {
+        if (!latestStudents || latestStudents.length === 0) {
+          return Swal.fire(
+            "Tidak ada data",
+            "Belum ada data siswa untuk diekspor.",
+            "info"
+          );
+        }
+        try {
+          const rows = latestStudents.map((s, i) => toRow(s, i));
+          const wb = XLSX.utils.book_new();
+          const ws = XLSX.utils.json_to_sheet(rows, {
+            header: Object.keys(rows[0]),
+          });
+          const colWidths = Object.keys(rows[0]).map(() => ({ wch: 20 }));
+          colWidths[1] = { wch: 28 }; // Nama
+          colWidths[5] = { wch: 40 }; // Alamat
+          ws["!cols"] = colWidths;
+          XLSX.utils.book_append_sheet(wb, ws, "Data Siswa");
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const mm = String(today.getMonth() + 1).padStart(2, "0");
+          const dd = String(today.getDate()).padStart(2, "0");
+          XLSX.writeFile(wb, `Data_Siswa_${yyyy}${mm}${dd}.xlsx`);
+        } catch (err) {
+          console.error(err);
+          Swal.fire("Gagal", "Terjadi kesalahan saat mengekspor.", "error");
+        }
+      });
+
+      // ======== IMPORT EXCEL (FIX TANGGAL & HP, IGNORE TIMESTAMP) ========
+      btnImportExcel.addEventListener("click", () => fileInput.click());
+
+      function normalizeHeader(h) {
+        const s = String(h || "")
+          .trim()
+          .toLowerCase();
+        if (!s) return "";
+        if (s.includes("timestamp")) return "__ignore"; // abaikan kolom timestamp
+        return s
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "") // remove diacritics
+          .replace(/\s+/g, " ")
+          .replace(/\s/g, "_")
+          .replace(/[^\w]+/g, "_");
+      }
+
+      const headerMap = [
+        {
+          keys: ["nama_siswa", "nama", "nama_lengkap", "nama_peserta"],
+          field: "namaSiswa",
+        },
+        { keys: ["tempat_lahir", "tempat"], field: "tempatLahir" },
+        {
+          keys: ["tanggal_lahir", "tgl_lahir", "tanggal"],
+          field: "tanggalLahir",
+        },
+        { keys: ["jenis_kelamin", "jk", "gender"], field: "jenisKelamin" },
+        {
+          keys: [
+            "alamat",
+            "alamat_sekarang",
+            "alamat_domilisi",
+            "alamat_rumah",
+          ],
+          field: "alamat",
+        },
+        {
+          keys: [
+            "no_telepon",
+            "no_telp",
+            "nomor_telepon",
+            "no_hp",
+            "nomor_hp",
+            "hp",
+            "telp",
+          ],
+          field: "noTelepon",
+        },
+        {
+          keys: [
+            "nama_ortu_wali",
+            "nama_ortu",
+            "nama_wali",
+            "orangtua",
+            "nama_orangtua",
+          ],
+          field: "namaOrtu",
+        },
+        {
+          keys: [
+            "no_telp_ortu_wali",
+            "no_telp_ortu",
+            "no_telp_wali",
+            "telp_ortu",
+            "hp_ortu",
+            "nomor_hp_ortu",
+            "nomor_telp_ortu",
+          ],
+          field: "noTeleponOrtu",
+        },
+        {
+          keys: [
+            "instrumen",
+            "pilihan_instrumen",
+            "alat_musik",
+            "instrumen_yang_dipilih",
+          ],
+          field: "pilihanIstrumen",
+        },
+        {
+          keys: ["genre", "pilihan_genre", "genre_yang_disukai"],
+          field: "pilihanGenre",
+        },
+        { keys: ["kelas"], field: "kelas" },
+        { keys: ["paket", "paket_pertemuan"], field: "pilihanPaket" },
+      ];
+
+      function findFieldByHeader(normalized) {
+        for (const m of headerMap) {
+          if (m.keys.includes(normalized)) return m.field;
+        }
+        return null;
+      }
+
+      function pad2(n) {
+        return String(n).padStart(2, "0");
+      }
+
+      function excelSerialToYMD(n) {
+        if (
+          window.XLSX &&
+          XLSX.SSF &&
+          typeof XLSX.SSF.parse_date_code === "function"
+        ) {
+          const o = XLSX.SSF.parse_date_code(n);
+          if (o) return `${o.y}-${pad2(o.m)}-${pad2(o.d)}`;
+        }
+        const epoch = new Date(Date.UTC(1899, 11, 30));
+        const ms = Math.round(n * 86400000);
+        const d = new Date(epoch.getTime() + ms);
+        return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(
+          d.getUTCDate()
+        )}`;
+      }
+
+      function parseDateStringToYMD(s) {
+        if (!s) return "";
+        const str = String(s).trim();
+        let m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); // yyyy-mm-dd
+        if (m) return `${m[1]}-${pad2(m[2])}-${pad2(m[3])}`;
+        m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/); // dd/mm/yyyy atau dd-mm-yyyy
+        if (m) return `${m[3]}-${pad2(m[2])}-${pad2(m[1])}`;
+        const d = new Date(str);
+        if (!isNaN(d.valueOf())) {
+          return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(
+            d.getDate()
+          )}`;
+        }
+        return str;
+      }
+
+      function normalizePhone(s) {
+        if (s === null || s === undefined) return "";
+        const raw = String(s).trim();
+        const digits = raw.replace(/[^\d]/g, ""); // pertahankan nol depan
+        return digits;
+      }
+
+      function splitMulti(val) {
+        if (!val && val !== 0) return [];
+        return String(val)
+          .split(/[,;\n]/)
+          .map((v) => v.trim())
+          .filter(Boolean);
+      }
+
+      function toPayloadFromRow(rowObj) {
+        const payload = {
+          namaSiswa: "",
+          tempatLahir: "",
+          tanggalLahir: "",
+          jenisKelamin: "",
+          kelas: "",
+          alamat: "",
+          noTelepon: "",
+          namaOrtu: "",
+          noTeleponOrtu: "",
+          pilihanIstrumen: [],
+          pilihanGenre: [],
+          pilihanPaket: "",
+        };
+
+        for (const [rawHeader, value] of Object.entries(rowObj)) {
+          const norm = normalizeHeader(rawHeader);
+          if (norm === "__ignore" || !norm) continue;
+          const field = findFieldByHeader(norm);
+          if (!field) continue;
+
+          if (field === "pilihanIstrumen" || field === "pilihanGenre") {
+            payload[field] = splitMulti(value);
+          } else if (field === "tanggalLahir") {
+            if (typeof value === "number") {
+              payload.tanggalLahir = excelSerialToYMD(value);
+            } else {
+              payload.tanggalLahir = parseDateStringToYMD(value);
+            }
+          } else if (field === "noTelepon" || field === "noTeleponOrtu") {
+            payload[field] = normalizePhone(value);
+          } else {
+            payload[field] = (value ?? "").toString().trim();
+          }
+        }
+        return payload;
+      }
+
+      fileInput.addEventListener("change", async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+          const data = await file.arrayBuffer();
+          const wb = XLSX.read(data, { type: "array", cellDates: true });
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const json = XLSX.utils.sheet_to_json(ws, { defval: "", raw: true });
+
+          if (!json.length) {
+            fileInput.value = "";
+            return Swal.fire("Kosong", "File tidak berisi data.", "info");
+          }
+
+          const payloads = json
+            .map((r) => toPayloadFromRow(r))
+            .filter((p) => p.namaSiswa);
+
+          if (!payloads.length) {
+            fileInput.value = "";
+            return Swal.fire(
+              "Tidak cocok",
+              "Tidak ada baris yang cocok dengan skema (pastikan kolom nama siswa ada).",
+              "warning"
+            );
+          }
+
+          const preview = payloads
+            .slice(0, 5)
+            .map(
+              (p, i) =>
+                `${i + 1}. ${p.namaSiswa} — ${
+                  p.pilihanIstrumen.join(", ") || "-"
+                }${
+                  p.kelas ? " / Kelas " + p.kelas : ""
+                }<br><span style="opacity:.75">TTL: ${p.tempatLahir || "-"}, ${
+                  p.tanggalLahir || "-"
+                }</span><br><span style="opacity:.75">HP: ${
+                  p.noTelepon || "-"
+                }</span>`
+            )
+            .join("<br><br>");
+
+          const { isConfirmed } = await Swal.fire({
+            title: "Import Excel?",
+            html: `Akan mengimpor <b>${
+              payloads.length
+            }</b> baris.<br><br><div class="text-start small">${preview}${
+              payloads.length > 5 ? "<br>..." : ""
+            }</div>`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Impor",
+            cancelButtonText: "Batal",
+            width: 620,
+          });
+          if (!isConfirmed) {
+            fileInput.value = "";
+            return;
+          }
+
+          const dupeKey = (s) =>
+            `${(s.namaSiswa || "").toLowerCase()}|${s.tanggalLahir || ""}`;
+          const existingKeys = new Set(latestStudents.map(dupeKey));
+
+          let ok = 0,
+            skip = 0,
+            fail = 0;
+          Swal.showLoading();
+          for (const p of payloads) {
+            const key = dupeKey(p);
+            if (existingKeys.has(key)) {
+              skip++;
+              continue;
+            }
+            try {
+              await addStudent(p);
+              ok++;
+            } catch (err) {
+              console.error(err);
+              fail++;
+            }
+          }
+
+          Swal.fire(
+            "Selesai",
+            `Impor selesai.<br><b>${ok}</b> ditambahkan, <b>${skip}</b> dilewati (duplikat), <b>${fail}</b> gagal.`,
+            fail ? "warning" : "success"
+          );
+        } catch (err) {
+          console.error(err);
+          Swal.fire(
+            "Gagal",
+            "File tidak dapat diproses. Pastikan format .xlsx valid.",
+            "error"
+          );
+        } finally {
+          fileInput.value = "";
+        }
+      });
+    </script>
+
+    <!-- Optional libs -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/startbootstrap/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
+  </body>
+</html>

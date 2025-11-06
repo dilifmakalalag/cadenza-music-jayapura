@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CADENZA — Data QR</title>
+
+    <!-- Vendor CSS -->
+    <link
+      rel="stylesheet"
+      href="assets/vendors/mdi/css/materialdesignicons.min.css"
+    />
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="shortcut icon" href="assets/images/favicon.png" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      #qrTable thead {
+        background-color: var(--bs-secondary);
+        color: #fff;
+      }
+      .table td,
+      .table th {
+        vertical-align: middle;
+      }
+
+      .chip {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(108, 117, 125, 0.2);
+        margin: 0 0.25rem 0.25rem 0;
+      }
+
+      .truncate {
+        max-width: 280px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* QR image: 300x300, kotak, putih background */
+      .qr-img {
+        width: 300px;
+        height: 300px;
+        object-fit: contain;
+        border-radius: 0 !important;
+        background: #fff;
+        border: none !important;
+      }
+
+      .filter-wrap .form-select,
+      .filter-wrap .form-control {
+        min-width: 170px;
+      }
+
+      /* Dark mode input */
+      .form-control,
+      .form-select,
+      .form-control:focus,
+      .form-select:focus {
+        color: #fff;
+        background: #2b2f32;
+        border-color: rgba(255, 255, 255, 0.25);
+      }
+      .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--bs-secondary);
+        box-shadow: 0 0 0 0.2rem rgba(var(--bs-secondary-rgb), 0.25);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-scroller">
+      <!-- Sidebar -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <div
+          class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top"
+        >
+          <a
+            class="sidebar-brand brand-logo text-white fw-bold"
+            href="index.html"
+            >CADENZA</a
+          >
+          <a class="sidebar-brand brand-logo-mini" href="index.html"
+            ><img src="assets/images/logo-mini.svg" alt="logo"
+          /></a>
+        </div>
+        <ul class="nav">
+          <li class="nav-item nav-category">
+            <span class="nav-link">Menu</span>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="index.html"
+              ><span class="menu-icon"><i class="mdi mdi-speedometer"></i></span
+              ><span class="menu-title">Beranda</span></a
+            >
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-siswa.html"
+              ><span class="menu-icon"
+                ><i class="mdi mdi-account-group"></i></span
+              ><span class="menu-title">Data Siswa</span></a
+            >
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-nilai.html"
+              ><span class="menu-icon"
+                ><i class="mdi mdi-clipboard-text"></i></span
+              ><span class="menu-title">Data Nilai</span></a
+            >
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link active" href="data-qr.html"
+              ><span class="menu-icon"><i class="mdi mdi-qrcode"></i></span
+              ><span class="menu-title">Data QR</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+
+      <div class="container-fluid page-body-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div
+            class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center"
+          >
+            <a class="navbar-brand brand-logo-mini" href="index.html"
+              ><img src="assets/images/logo-mini.svg" alt="logo"
+            /></a>
+          </div>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+            <button
+              class="navbar-toggler navbar-toggler align-self-center"
+              type="button"
+              data-toggle="minimize"
+            >
+              <span class="mdi mdi-menu"></span>
+            </button>
+            <ul class="navbar-nav w-100"></ul>
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link"
+                  id="profileDropdown"
+                  href="#"
+                  data-toggle="dropdown"
+                >
+                  <div class="navbar-profile d-flex align-items-center">
+                    <img
+                      id="profilePhoto"
+                      class="img-xs rounded-circle me-2"
+                      src="assets/images/faces/face15.jpg"
+                      alt=""
+                    />
+                    <p
+                      id="profileName"
+                      class="mb-0 d-none d-sm-block navbar-profile-name"
+                    >
+                      Pengguna
+                    </p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block ms-1"></i>
+                  </div>
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                  aria-labelledby="profileDropdown"
+                >
+                  <div class="dropdown-divider"></div>
+                  <a id="logoutBtn" class="dropdown-item preview-item" href="#">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-logout text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Log out</p>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+            <button
+              class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
+              type="button"
+              data-toggle="offcanvas"
+            >
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
+          </div>
+        </nav>
+
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div
+              class="d-flex flex-wrap align-items-center justify-content-between gap-2"
+            >
+              <h4 class="mb-0">Data QR</h4>
+              <div class="filter-wrap row g-2 w-100">
+                <div class="col-12 col-md-5">
+                  <input
+                    id="searchName"
+                    class="form-control"
+                    placeholder="Cari nama siswa..."
+                  />
+                </div>
+                <div class="col-6 col-md-2">
+                  <select id="filterInstrumen" class="form-control form-select">
+                    <option value="">Semua Instrumen</option>
+                  </select>
+                </div>
+                <div class="col-6 col-md-3">
+                  <select
+                    id="filterInstruktur"
+                    class="form-control form-select"
+                  >
+                    <option value="">Semua Instruktur (nilai terakhir)</option>
+                  </select>
+                </div>
+                <div class="col-12 col-md-2 d-flex align-items-center">
+                  <button
+                    id="btnRefresh"
+                    class="btn btn-outline-secondary btn-sm w-100"
+                  >
+                    <i class="mdi mdi-refresh"></i> Refresh
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table
+                        id="qrTable"
+                        class="table table-striped table-hover align-middle"
+                      >
+                        <thead class="table-secondary">
+                          <tr>
+                            <th>#</th>
+                            <th>QR</th>
+                            <th>Nama</th>
+                            <th>Instrumen (Siswa)</th>
+                            <th>Predikat</th>
+                            <th>Materi (Terakhir)</th>
+                            <th>Instruktur</th>
+                            <th>Profil</th>
+                            <th>Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                    <!-- <small class="text-muted">
+                      QR dibangkitkan dari
+                      <code>https://api.qrserver.com/v1/create-qr-code/</code>
+                      dengan data URL profil siswa.
+                    </small> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="footer">
+            <div
+              class="d-sm-flex justify-content-center justify-content-sm-between"
+            >
+              <span
+                class="text-muted d-block text-center text-sm-left d-sm-inline-block"
+                >Copyright © 2025</span
+              >
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendor JS -->
+    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- App -->
+    <script type="module">
+      import {
+        onAuthStateChangedHandler,
+        signOut,
+        onStudentsSnapshot,
+        onNilaiSnapshot,
+      } from "./firebase.js";
+
+      // === Auth Guard ===
+      const profileName = document.getElementById("profileName");
+      const profilePhoto = document.getElementById("profilePhoto");
+      const logoutBtn = document.getElementById("logoutBtn");
+      onAuthStateChangedHandler((user) => {
+        if (user) {
+          profileName.textContent =
+            user.displayName || user.email || "Pengguna";
+          if (user.photoURL) profilePhoto.src = user.photoURL;
+        } else {
+          profileName.textContent = "Pengguna";
+          profilePhoto.src = "assets/images/faces/face15.jpg";
+        }
+      });
+      logoutBtn?.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const q = await Swal.fire({
+          title: "Log out?",
+          icon: "question",
+          showCancelButton: true,
+        });
+        if (q.isConfirmed) await signOut();
+      });
+
+      // === Elemen ===
+      const tbody = document.querySelector("#qrTable tbody");
+      const btnRefresh = document.getElementById("btnRefresh");
+      const searchName = document.getElementById("searchName");
+      const filterInstrumen = document.getElementById("filterInstrumen");
+      const filterInstruktur = document.getElementById("filterInstruktur");
+
+      let siswaList = [];
+      let nilaiList = [];
+      let combined = [];
+
+      function buildProfileUrl(id) {
+        const base = `${location.origin}${location.pathname.replace(
+          /[^/]+$/,
+          ""
+        )}`;
+        return `${base}profile.html?id=${encodeURIComponent(id)}`;
+      }
+      function buildQrUrl(dataUrl) {
+        return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
+          dataUrl
+        )}`;
+      }
+      function parseDateStr(d) {
+        if (!d) return 0;
+        const t = Date.parse(d);
+        return isNaN(t) ? 0 : t;
+      }
+      function materiToHtml(m) {
+        const arr = Array.isArray(m) ? m : m ? [m] : [];
+        return arr.map((x) => `<span class="chip">${x}</span>`).join(" ");
+      }
+      function joinArr(a) {
+        return Array.isArray(a) ? a.join(", ") : a || "";
+      }
+
+      // === Predikat dari nilai ===
+      function toPredikat(nilai) {
+        if (typeof nilai !== "number") return "-";
+        if (nilai >= 90) return "A (Sangat Baik)";
+        if (nilai >= 80) return "B (Baik)";
+        if (nilai >= 70) return "C (Cukup)";
+        if (nilai >= 60) return "D (Kurang)";
+        return "E (Sangat Kurang)";
+      }
+
+      function combineData() {
+        const lastMap = new Map();
+        for (const n of nilaiList) {
+          const sid = n.siswaId;
+          if (!sid) continue;
+          const cur = lastMap.get(sid);
+          if (!cur || parseDateStr(n.tanggal) > parseDateStr(cur.tanggal)) {
+            lastMap.set(sid, n);
+          }
+        }
+
+        const setInstrumen = new Set([""]);
+        const setInstruktur = new Set([""]);
+
+        combined = [];
+        for (const s of siswaList) {
+          const last = lastMap.get(s.id);
+          if (!last) continue;
+          const profileUrl = buildProfileUrl(s.id);
+          const qrUrl = buildQrUrl(profileUrl);
+          const instrumenSiswa = Array.isArray(s.pilihanIstrumen)
+            ? s.pilihanIstrumen
+            : s.pilihanIstrumen
+            ? [s.pilihanIstrumen]
+            : [];
+          instrumenSiswa.forEach((v) => setInstrumen.add((v || "").trim()));
+          if (last.instruktur) setInstruktur.add(last.instruktur.trim());
+
+          combined.push({
+            id: s.id,
+            nama: s.namaSiswa || "",
+            instrumenSiswa,
+            profileUrl,
+            qrUrl,
+            lastPredikat: toPredikat(last.nilai),
+            lastMateri: last.materi,
+            lastInstruktur: last.instruktur || "",
+            lastTanggal: last.tanggal || "",
+          });
+        }
+
+        const curIns = filterInstrumen.value;
+        const curGuru = filterInstruktur.value;
+        filterInstrumen.innerHTML = "";
+        filterInstruktur.innerHTML = "";
+        [...setInstrumen].forEach((v) => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v || "Semua Instrumen";
+          filterInstrumen.appendChild(opt);
+        });
+        [...setInstruktur].forEach((v) => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v || "Semua Instruktur (nilai terakhir)";
+          filterInstruktur.appendChild(opt);
+        });
+        filterInstrumen.value = curIns ?? "";
+        filterInstruktur.value = curGuru ?? "";
+      }
+
+      function applyFilterAndRender() {
+        const q = searchName.value.trim().toLowerCase();
+        const fIns = (filterInstrumen.value || "").toLowerCase();
+        const fGuru = (filterInstruktur.value || "").toLowerCase();
+
+        const rows = combined.filter((r) => {
+          const byName = !q || r.nama.toLowerCase().includes(q);
+          const byIns =
+            !fIns ||
+            r.instrumenSiswa.map((x) => (x || "").toLowerCase()).includes(fIns);
+          const byGuru =
+            !fGuru || (r.lastInstruktur || "").toLowerCase() === fGuru;
+          return byName && byIns && byGuru;
+        });
+
+        tbody.innerHTML = "";
+        rows.forEach((r, i) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td><img class="qr-img" src="${r.qrUrl}" alt="QR ${r.nama}" /></td>
+            <td>${r.nama}</td>
+            <td>${joinArr(r.instrumenSiswa)}</td>
+            <td>${r.lastPredikat}</td>
+            <td>${materiToHtml(r.lastMateri) || "-"}</td>
+            <td>${r.lastInstruktur || "-"}</td>
+            <td class="truncate"><a href="${r.profileUrl}" target="_blank">${
+            r.profileUrl
+          }</a></td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary btn-copy" data-url="${
+                r.profileUrl
+              }">
+                <i class="mdi mdi-content-copy"></i> Salin URL
+              </button>
+              <a class="btn btn-sm btn-outline-success" href="${
+                r.qrUrl
+              }" download="qr-${encodeURIComponent(r.nama || r.id)}.png">
+                <i class="mdi mdi-download"></i> Unduh QR
+              </a>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+
+        document.querySelectorAll(".btn-copy").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const url = e.currentTarget.dataset.url;
+            try {
+              await navigator.clipboard.writeText(url);
+              Swal.fire(
+                "Tersalin",
+                "URL profil disalin ke clipboard.",
+                "success"
+              );
+            } catch {
+              Swal.fire("Gagal", "Tidak dapat menyalin.", "error");
+            }
+          });
+        });
+      }
+
+      onStudentsSnapshot((stu) => {
+        siswaList = stu;
+        combineData();
+        applyFilterAndRender();
+      });
+      onNilaiSnapshot((nil) => {
+        nilaiList = nil;
+        combineData();
+        applyFilterAndRender();
+      });
+      btnRefresh.addEventListener("click", () => {
+        combineData();
+        applyFilterAndRender();
+      });
+      searchName.addEventListener("input", applyFilterAndRender);
+      filterInstrumen.addEventListener("change", applyFilterAndRender);
+      filterInstruktur.addEventListener("change", applyFilterAndRender);
+    </script>
+  </body>
+</html>
