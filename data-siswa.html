@@ -521,6 +521,7 @@
 
     <!-- App logic -->
     <script type="module">
+      // 1) Ambil fungsi app kamu + db dari firebase.js
       import {
         db,
         onStudentsSnapshot,
@@ -530,6 +531,10 @@
         deleteStudent,
         onAuthStateChangedHandler,
         signOut,
+      } from "./firebase.js";
+
+      // 2) Ambil util Firestore langsung dari CDN (versi HARUS sama dgn firebase.js)
+      import {
         collection,
         doc,
         getDoc,
@@ -539,7 +544,7 @@
         where,
         getDocs,
         writeBatch,
-      } from "./firebase.js";
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
       /* ====== KONFIG NAMA KOLEKSI ====== */
       const STUDENTS_COL = "siswa";
