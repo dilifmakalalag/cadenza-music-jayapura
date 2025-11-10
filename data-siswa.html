@@ -521,7 +521,7 @@
 
     <!-- App logic -->
     <script type="module">
-      // 1) Ambil fungsi app kamu + db dari firebase.js
+      // Ambil dari firebase.js — HARUS ada `db`
       import {
         db,
         onStudentsSnapshot,
@@ -533,7 +533,7 @@
         signOut,
       } from "./firebase.js";
 
-      // 2) Ambil util Firestore langsung dari CDN (versi HARUS sama dgn firebase.js)
+      // Util Firestore dari CDN (versi sama 10.12.2)
       import {
         collection,
         doc,

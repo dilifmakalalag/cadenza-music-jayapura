@@ -17,6 +17,7 @@ import {
   getDocs,
   writeBatch,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 import {
   getAuth,
   onAuthStateChanged,
@@ -246,6 +247,7 @@ export async function signOut() {
 ======================== */
 export {
   collection,
+  db,
   doc,
   getDoc,
   setDoc,
