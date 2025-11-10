@@ -51,6 +51,20 @@
         padding: 0.1rem 0.25rem;
         border-radius: 0.25rem;
       }
+      /* Pagination */
+      .pagination-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+      .pagination {
+        margin: 0;
+      }
+      .page-link {
+        cursor: pointer;
+      }
     </style>
   </head>
 
@@ -182,7 +196,7 @@
             <div
               class="d-flex align-items-center justify-content-between flex-wrap gap-2"
             >
-              <h4 class="mb-0">Data Siswa Kursus</h4>
+              <h4 class="mb-0">Data Siswa</h4>
               <div class="d-flex gap-2">
                 <button id="btnImportExcel" class="btn btn-sm btn-outline-info">
                   <i class="mdi mdi-file-import"></i> Import Excel
@@ -240,6 +254,22 @@
                         <tbody></tbody>
                       </table>
                     </div>
+
+                    <!-- PAGINATION -->
+                    <div class="pagination-wrapper mt-3">
+                      <div id="pageInfo" class="small-muted">
+                        Menampilkan 0–0 dari 0
+                      </div>
+                      <nav aria-label="Page navigation">
+                        <ul
+                          id="pagination"
+                          class="pagination pagination-sm mb-0"
+                        >
+                          <!-- Buttons will be injected by JS -->
+                        </ul>
+                      </nav>
+                    </div>
+                    <!-- /PAGINATION -->
                   </div>
                 </div>
               </div>
@@ -559,6 +589,9 @@
       const btnImportExcel = document.getElementById("btnImportExcel");
       const fileInput = document.getElementById("fileInput");
 
+      const pageInfo = document.getElementById("pageInfo");
+      const paginationEl = document.getElementById("pagination");
+
       /* Auth (tetap) */
       const profileName = document.getElementById("profileName");
       const profilePhoto = document.getElementById("profilePhoto");
@@ -640,24 +673,98 @@
       }
       pilihanIstrumen.addEventListener("change", validateInstrumenRequired);
 
-      /* ===== STATE ===== */
+      /* ===== STATE & PAGINATION ===== */
       let latestStudents = [];
-      let isEditingId = false;
+      const pageSize = 10;
+      let currentPage = 1; // 1-based
 
-      toggleEditIdBtn.addEventListener("click", () => {
-        isEditingId = !isEditingId;
-        studentIdView.disabled = !isEditingId;
-        toggleEditIdBtn.textContent = isEditingId ? "Batal Ubah ID" : "Ubah ID";
-        if (!isEditingId) {
-          studentIdView.value = studentIdInput.value || "";
+      function getTotalPages() {
+        return Math.max(1, Math.ceil(latestStudents.length / pageSize));
+      }
+      function clampPage(p) {
+        const t = getTotalPages();
+        return Math.min(Math.max(1, p), t);
+      }
+
+      function buildPagination() {
+        const total = latestStudents.length;
+        const totalPages = getTotalPages();
+        currentPage = clampPage(currentPage);
+
+        paginationEl.innerHTML = "";
+
+        // Helper to create li > a
+        const li = (disabled, active, label, gotoPage, aria) => {
+          const li = document.createElement("li");
+          li.className = `page-item${disabled ? " disabled" : ""}${
+            active ? " active" : ""
+          }`;
+          const a = document.createElement("a");
+          a.className = "page-link";
+          a.innerText = label;
+          if (aria) a.setAttribute("aria-label", aria);
+          if (!disabled)
+            a.addEventListener("click", () => {
+              setPage(gotoPage);
+            });
+          li.appendChild(a);
+          return li;
+        };
+
+        // First / Prev
+        paginationEl.appendChild(li(currentPage === 1, false, "«", 1, "First"));
+        paginationEl.appendChild(
+          li(currentPage === 1, false, "‹", currentPage - 1, "Previous")
+        );
+
+        // Page numbers (windowed)
+        const windowSize = 5;
+        const half = Math.floor(windowSize / 2);
+        let start = Math.max(1, currentPage - half);
+        let end = Math.min(getTotalPages(), start + windowSize - 1);
+        if (end - start + 1 < windowSize)
+          start = Math.max(1, end - windowSize + 1);
+
+        for (let p = start; p <= end; p++) {
+          paginationEl.appendChild(li(false, p === currentPage, String(p), p));
         }
-      });
 
-      /* ===== RENDER ===== */
-      function renderStudents(students) {
-        latestStudents = students;
+        // Next / Last
+        paginationEl.appendChild(
+          li(currentPage === totalPages, false, "›", currentPage + 1, "Next")
+        );
+        paginationEl.appendChild(
+          li(currentPage === totalPages, false, "»", totalPages, "Last")
+        );
+
+        // Page info
+        const from = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+        const to = Math.min(total, currentPage * pageSize);
+        pageInfo.textContent = `Menampilkan ${from}–${to} dari ${total}`;
+      }
+
+      function setPage(p) {
+        currentPage = clampPage(p);
+        renderStudentsPage();
+      }
+
+      /* ===== RENDER (dengan pagination) ===== */
+      function renderStudentsPage() {
+        const total = latestStudents.length;
+        const tpages = getTotalPages();
+        currentPage = clampPage(currentPage);
+
         tableBody.innerHTML = "";
-        students.forEach((s, i) => {
+        if (total === 0) {
+          buildPagination();
+          return;
+        }
+
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = Math.min(total, startIndex + pageSize);
+        const slice = latestStudents.slice(startIndex, endIndex);
+
+        slice.forEach((s, i) => {
           const instr = Array.isArray(s.pilihanIstrumen)
             ? s.pilihanIstrumen.join(", ")
             : s.pilihanIstrumen || "";
@@ -669,7 +776,7 @@
               : s.pilihanPaket || "";
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${i + 1}</td>
+            <td>${startIndex + i + 1}</td>
             <td>${s.id ?? ""}</td>
             <td>${s.namaSiswa ?? ""}</td>
             <td>${s.tempatLahir ?? ""}</td>
@@ -692,7 +799,7 @@
           tableBody.appendChild(tr);
         });
 
-        /* edit */
+        // re-bind edit/delete on current page
         document.querySelectorAll(".btn-edit").forEach((btn) => {
           btn.addEventListener("click", async (e) => {
             const id = e.currentTarget.dataset.id;
@@ -727,7 +834,6 @@
           });
         });
 
-        /* delete */
         document.querySelectorAll(".btn-delete").forEach((btn) => {
           btn.addEventListener("click", async (e) => {
             const id = e.currentTarget.dataset.id;
@@ -741,9 +847,21 @@
             });
             if (!conf.isConfirmed) return;
             await deleteStudent(id);
+
+            // setelah delete, kalau halaman jadi kosong, mundurkan halaman
+            const afterCount = latestStudents.length - 1;
+            const maxPage = Math.max(1, Math.ceil(afterCount / pageSize));
+            if (currentPage > maxPage) currentPage = maxPage;
             Swal.fire("Dihapus", "Data siswa berhasil dihapus.", "success");
           });
         });
+
+        buildPagination();
+      }
+
+      function renderStudents(students) {
+        latestStudents = students;
+        renderStudentsPage();
       }
 
       /* Tambah */
@@ -886,6 +1004,16 @@
       }
 
       /* ===== Submit ===== */
+      let isEditingId = false;
+      toggleEditIdBtn.addEventListener("click", () => {
+        isEditingId = !isEditingId;
+        studentIdView.disabled = !isEditingId;
+        toggleEditIdBtn.textContent = isEditingId ? "Batal Ubah ID" : "Ubah ID";
+        if (!isEditingId) {
+          studentIdView.value = studentIdInput.value || "";
+        }
+      });
+
       studentForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         validateInstrumenRequired();
@@ -913,7 +1041,6 @@
         Swal.showLoading();
         try {
           if (!oldId) {
-            // tambah: id auto
             await addStudent(payload);
             Swal.fire("Berhasil", "Data siswa ditambahkan.", "success");
           } else if (willChangeId) {
@@ -960,7 +1087,12 @@
       });
 
       /* ===== Realtime ===== */
-      onStudentsSnapshot(renderStudents);
+      onStudentsSnapshot((list) => {
+        latestStudents = list;
+        // kalau current page di luar range (mis import/delete), clamp
+        currentPage = clampPage(currentPage);
+        renderStudentsPage();
+      });
 
       /* ===== Export Excel ===== */
       function toRow(s, i) {
@@ -1262,8 +1394,11 @@
         }
       });
 
-      // start realtime
-      onStudentsSnapshot(renderStudents);
+      // start realtime (render + pagination)
+      onStudentsSnapshot((list) => {
+        latestStudents = list;
+        setPage(currentPage);
+      });
     </script>
 
     <!-- Optional libs -->
