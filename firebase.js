@@ -247,7 +247,6 @@ export async function signOut() {
 ======================== */
 export {
   collection,
-  db,
   doc,
   getDoc,
   setDoc,
