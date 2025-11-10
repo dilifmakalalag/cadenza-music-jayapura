@@ -18,7 +18,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-      /* Tabel */
       #studentsTable thead {
         background-color: var(--bs-secondary);
         color: #fff;
@@ -27,8 +26,6 @@
       .table th {
         vertical-align: middle;
       }
-
-      /* Form look */
       .form-control,
       .form-select,
       .form-control:focus,
@@ -45,19 +42,21 @@
         border-color: var(--bs-secondary);
         box-shadow: 0 0 0 0.2rem rgba(var(--bs-secondary-rgb), 0.25);
       }
-      .form-text {
-        color: rgba(255, 255, 255, 0.75);
-      }
       .small-muted {
         color: rgba(255, 255, 255, 0.6);
         font-size: 0.85rem;
+      }
+      code {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 0.1rem 0.25rem;
+        border-radius: 0.25rem;
       }
     </style>
   </head>
 
   <body>
     <div class="container-scroller">
-      <!-- Sidebar -->
+      <!-- ===== Sidebar (dipertahankan utuh) ===== -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div
           class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top"
@@ -108,7 +107,7 @@
 
       <!-- Page content -->
       <div class="container-fluid page-body-wrapper">
-        <!-- Navbar -->
+        <!-- ===== Navbar (dipertahankan utuh) ===== -->
         <nav class="navbar p-0 fixed-top d-flex flex-row">
           <div
             class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center"
@@ -118,7 +117,6 @@
             /></a>
           </div>
           <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
-            <!-- Burger / toggler -->
             <button
               class="navbar-toggler navbar-toggler align-self-center"
               type="button"
@@ -126,10 +124,7 @@
             >
               <span class="mdi mdi-menu"></span>
             </button>
-
             <ul class="navbar-nav w-100"></ul>
-
-            <!-- Profile login -->
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item dropdown">
                 <a
@@ -172,8 +167,6 @@
                 </div>
               </li>
             </ul>
-
-            <!-- Burger offcanvas (mobile) -->
             <button
               class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
               type="button"
@@ -230,18 +223,17 @@
                         <thead class="table-secondary">
                           <tr>
                             <th>#</th>
+                            <th>ID</th>
                             <th>Nama</th>
                             <th>Tempat Lahir</th>
                             <th>Tanggal Lahir</th>
                             <th>Jenis Kelamin</th>
                             <th>Alamat</th>
-                            <th>No. Telepon</th>
-                            <th>Nama Ortu/Wali</th>
-                            <th>No. Telp Ortu/Wali</th>
-                            <th>Istrumen</th>
-                            <th>Genre</th>
-                            <th>Kelas</th>
-                            <th>Paket</th>
+                            <th>No Hp</th>
+                            <th>Nama Orang Tua</th>
+                            <th>No Hp Orang Tua</th>
+                            <th>Pilihan Instrumen</th>
+                            <th>Pilihan Paket Pertemuan</th>
                             <th>Aksi</th>
                           </tr>
                         </thead>
@@ -275,18 +267,46 @@
                     <div class="modal-body">
                       <input type="hidden" id="studentId" />
                       <div class="row g-3">
-                        <!-- HURUF SAJA -->
-                        <div class="col-md-6">
-                          <label for="namaSiswa" class="form-label"
-                            >Nama Siswa</label
+                        <!-- ID Siswa (doc id) -->
+                        <div class="col-12">
+                          <label
+                            for="studentIdView"
+                            class="form-label d-flex align-items-center justify-content-between"
                           >
+                            <span>ID Siswa</span>
+                            <button
+                              type="button"
+                              id="toggleEditIdBtn"
+                              class="btn btn-sm btn-outline-warning"
+                            >
+                              Ubah ID
+                            </button>
+                          </label>
+                          <input
+                            type="text"
+                            id="studentIdView"
+                            class="form-control"
+                            placeholder="(ID otomatis)"
+                            disabled
+                            pattern="^[a-zA-Z0-9_\-]{4,128}$"
+                            title="Huruf, angka, '-' atau '_', min 4 karakter"
+                          />
+                          <div class="form-text">
+                            Format: huruf/angka/dash/underscore. Contoh:
+                            <code>dilif_001</code>.
+                          </div>
+                        </div>
+
+                        <!-- Nama / Tempat Lahir -->
+                        <div class="col-md-6">
+                          <label for="namaSiswa" class="form-label">Nama</label>
                           <input
                             type="text"
                             id="namaSiswa"
                             class="form-control"
                             required
-                            pattern="^[A-Za-zÀ-ž\s]+$"
-                            title="Hanya huruf dan spasi"
+                            pattern="^[A-Za-zÀ-ž\s'-]+$"
+                            title="Hanya huruf, spasi, '-', dan apostrof"
                           />
                           <div class="invalid-feedback">
                             Nama hanya boleh huruf.
@@ -309,7 +329,7 @@
                           </div>
                         </div>
 
-                        <!-- Tanggal / Jenis Kelamin / Kelas -->
+                        <!-- Tanggal / Jenis Kelamin -->
                         <div class="col-md-4">
                           <label for="tanggalLahir" class="form-label"
                             >Tanggal Lahir</label
@@ -342,20 +362,6 @@
                             Pilih jenis kelamin.
                           </div>
                         </div>
-                        <div class="col-md-4">
-                          <label for="kelas" class="form-label">Kelas</label>
-                          <select
-                            id="kelas"
-                            class="form-control form-select"
-                            required
-                          >
-                            <option value="">Pilih...</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                          </select>
-                          <div class="invalid-feedback">Pilih kelas.</div>
-                        </div>
 
                         <!-- Alamat -->
                         <div class="col-12">
@@ -371,10 +377,10 @@
                           </div>
                         </div>
 
-                        <!-- ANGKA SAJA -->
+                        <!-- Telepon / Orang Tua -->
                         <div class="col-md-6">
                           <label for="noTelepon" class="form-label"
-                            >No. Telepon</label
+                            >No Hp</label
                           >
                           <input
                             type="text"
@@ -390,23 +396,23 @@
                         </div>
                         <div class="col-md-6">
                           <label for="namaOrtu" class="form-label"
-                            >Nama Ortu/Wali</label
+                            >Nama Orang Tua</label
                           >
                           <input
                             type="text"
                             id="namaOrtu"
                             class="form-control"
                             required
-                            pattern="^[A-Za-zÀ-ž\s]+$"
-                            title="Hanya huruf dan spasi"
+                            pattern="^[A-Za-zÀ-ž\s'-]+$"
+                            title="Hanya huruf, spasi, '-', dan apostrof"
                           />
                           <div class="invalid-feedback">
-                            Nama ortu hanya huruf.
+                            Nama orang tua hanya huruf.
                           </div>
                         </div>
                         <div class="col-md-6">
                           <label for="noTeleponOrtu" class="form-label"
-                            >No. Telepon Ortu/Wali</label
+                            >No Hp Orang Tua</label
                           >
                           <input
                             type="text"
@@ -421,10 +427,10 @@
                           </div>
                         </div>
 
-                        <!-- MULTI-SELECT -->
+                        <!-- MULTI SELECT INSTRUMEN -->
                         <div class="col-md-6">
                           <label for="pilihanIstrumen" class="form-label"
-                            >Pilihan Istrumen</label
+                            >Pilihan Instrumen</label
                           >
                           <select
                             id="pilihanIstrumen"
@@ -432,45 +438,28 @@
                             multiple
                             required
                           >
-                            <option value="Gitar">Gitar</option>
-                            <option value="Piano">Piano</option>
-                            <option value="Biola">Biola</option>
+                            <option value="Gitar Klasik">Gitar Klasik</option>
+                            <option value="Gitar Pop">Gitar Pop</option>
+                            <option value="Piano Klasik">Piano Klasik</option>
+                            <option value="Piano Pop">Piano Pop</option>
+                            <option value="Biola Klasik">Biola Klasik</option>
+                            <option value="Biola Pop">Biola Pop</option>
+                            <option value="Vocal">Vocal</option>
                             <option value="Drum">Drum</option>
+                            <option value="Keyboard">Keyboard</option>
                           </select>
-                          <div class="form-text">
+                          <div class="small text-muted">
                             Tahan Ctrl/⌘ untuk pilih lebih dari satu.
                           </div>
                           <div class="invalid-feedback">
                             Pilih minimal satu instrumen.
                           </div>
                         </div>
-                        <div class="col-md-6">
-                          <label for="pilihanGenre" class="form-label"
-                            >Pilihan Genre</label
-                          >
-                          <select
-                            id="pilihanGenre"
-                            class="form-control form-select"
-                            multiple
-                            required
-                          >
-                            <option value="Pop">Pop</option>
-                            <option value="Rock">Rock</option>
-                            <option value="Klasik">Klasik</option>
-                            <option value="Jazz">Jazz</option>
-                          </select>
-                          <div class="form-text">
-                            Tahan Ctrl/⌘ untuk pilih lebih dari satu.
-                          </div>
-                          <div class="invalid-feedback">
-                            Pilih minimal satu genre.
-                          </div>
-                        </div>
 
-                        <!-- Paket (single) -->
+                        <!-- Paket -->
                         <div class="col-md-6">
                           <label for="pilihanPaket" class="form-label"
-                            >Paket Pertemuan</label
+                            >Pilihan Paket Pertemuan</label
                           >
                           <select
                             id="pilihanPaket"
@@ -478,9 +467,8 @@
                             required
                           >
                             <option value="">Pilih...</option>
-                            <option value="Reguler">Reguler</option>
-                            <option value="Intensif">Intensif</option>
-                            <option value="Masterclass">Masterclass</option>
+                            <option value="A">Paket A (4x pertemuan)</option>
+                            <option value="B">Paket B (8x pertemuan)</option>
                           </select>
                           <div class="invalid-feedback">Pilih paket.</div>
                         </div>
@@ -507,6 +495,7 @@
                 </div>
               </div>
             </div>
+            <!-- /Modal -->
           </div>
 
           <footer class="footer">
@@ -527,12 +516,13 @@
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- SheetJS for Excel import/export -->
+    <!-- SheetJS -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <!-- App logic -->
     <script type="module">
       import {
+        db,
         onStudentsSnapshot,
         getStudent,
         addStudent,
@@ -540,18 +530,31 @@
         deleteStudent,
         onAuthStateChangedHandler,
         signOut,
+        collection,
+        doc,
+        getDoc,
+        setDoc,
+        deleteDoc,
+        query,
+        where,
+        getDocs,
+        writeBatch,
       } from "./firebase.js";
 
+      /* ====== KONFIG NAMA KOLEKSI ====== */
+      const STUDENTS_COL = "siswa";
+      const NILAI_COL = "nilai";
+
+      /* ====== UI REFS ====== */
       const modalEl = document.getElementById("studentModal");
       const modal = new bootstrap.Modal(modalEl);
       const studentForm = document.getElementById("studentForm");
       const tableBody = document.querySelector("#studentsTable tbody");
-      const studentIdInput = document.getElementById("studentId");
       const btnExportExcel = document.getElementById("btnExportExcel");
       const btnImportExcel = document.getElementById("btnImportExcel");
       const fileInput = document.getElementById("fileInput");
 
-      // ===== Auth guard + profile =====
+      /* Auth (dipertahankan) */
       const profileName = document.getElementById("profileName");
       const profilePhoto = document.getElementById("profilePhoto");
       const logoutBtn = document.getElementById("logoutBtn");
@@ -581,7 +584,38 @@
         }
       });
 
-      // ===== Helpers Multi-select =====
+      /* Form fields */
+      const studentIdInput = document.getElementById("studentId"); // hidden
+      const studentIdView = document.getElementById("studentIdView");
+      const toggleEditIdBtn = document.getElementById("toggleEditIdBtn");
+      const namaSiswa = document.getElementById("namaSiswa");
+      const tempatLahir = document.getElementById("tempatLahir");
+      const tanggalLahir = document.getElementById("tanggalLahir");
+      const jenisKelamin = document.getElementById("jenisKelamin");
+      const alamat = document.getElementById("alamat");
+      const noTelepon = document.getElementById("noTelepon");
+      const namaOrtu = document.getElementById("namaOrtu");
+      const noTeleponOrtu = document.getElementById("noTeleponOrtu");
+      const pilihanIstrumen = document.getElementById("pilihanIstrumen");
+      const pilihanPaket = document.getElementById("pilihanPaket");
+
+      /* Validators */
+      const onlyLetters = /[^A-Za-zÀ-ž\s'\-]/g,
+        onlyNumbers = /[^0-9]/g;
+      [namaSiswa, tempatLahir, namaOrtu].forEach((el) =>
+        el.addEventListener(
+          "input",
+          () => (el.value = el.value.replace(onlyLetters, ""))
+        )
+      );
+      [noTelepon, noTeleponOrtu].forEach((el) =>
+        el.addEventListener(
+          "input",
+          () => (el.value = el.value.replace(onlyNumbers, ""))
+        )
+      );
+
+      /* Multi-select helpers */
       function getMultiSelectValues(selectEl) {
         return Array.from(selectEl.selectedOptions).map((o) => o.value);
       }
@@ -591,48 +625,47 @@
           (opt) => (opt.selected = set.has(opt.value))
         );
       }
+      function validateInstrumenRequired() {
+        const val = getMultiSelectValues(pilihanIstrumen);
+        if (val.length === 0) {
+          pilihanIstrumen.setCustomValidity("Pilih minimal satu instrumen");
+        } else {
+          pilihanIstrumen.setCustomValidity("");
+        }
+      }
+      pilihanIstrumen.addEventListener("change", validateInstrumenRequired);
 
-      // Fields
-      const namaSiswa = document.getElementById("namaSiswa");
-      const tempatLahir = document.getElementById("tempatLahir");
-      const tanggalLahir = document.getElementById("tanggalLahir");
-      const jenisKelamin = document.getElementById("jenisKelamin");
-      const kelas = document.getElementById("kelas");
-      const alamat = document.getElementById("alamat");
-      const noTelepon = document.getElementById("noTelepon");
-      const namaOrtu = document.getElementById("namaOrtu");
-      const noTeleponOrtu = document.getElementById("noTeleponOrtu");
-      const pilihanIstrumen = document.getElementById("pilihanIstrumen");
-      const pilihanGenre = document.getElementById("pilihanGenre");
-      const pilihanPaket = document.getElementById("pilihanPaket");
-
-      // Validasi realtime huruf/angka (opsional tetap dipertahankan)
-      const onlyLetters = /[^A-Za-zÀ-ž\s]/g;
-      const onlyNumbers = /[^0-9]/g;
-      [namaSiswa, tempatLahir, namaOrtu].forEach((el) => {
-        el.addEventListener(
-          "input",
-          () => (el.value = el.value.replace(onlyLetters, ""))
-        );
-      });
-      [noTelepon, noTeleponOrtu].forEach((el) => {
-        el.addEventListener(
-          "input",
-          () => (el.value = el.value.replace(onlyNumbers, ""))
-        );
-      });
-
-      // ===== Data cache untuk export/dedupe =====
+      /* ===== STATE ===== */
       let latestStudents = [];
+      let isEditingId = false;
 
-      // Render
+      toggleEditIdBtn.addEventListener("click", () => {
+        isEditingId = !isEditingId;
+        studentIdView.disabled = !isEditingId;
+        toggleEditIdBtn.textContent = isEditingId ? "Batal Ubah ID" : "Ubah ID";
+        if (!isEditingId) {
+          studentIdView.value = studentIdInput.value || "";
+        }
+      });
+
+      /* ===== RENDER ===== */
       function renderStudents(students) {
-        latestStudents = students; // simpan snapshot terakhir untuk Export/dupe-check
+        latestStudents = students;
         tableBody.innerHTML = "";
         students.forEach((s, i) => {
+          const instr = Array.isArray(s.pilihanIstrumen)
+            ? s.pilihanIstrumen.join(", ")
+            : s.pilihanIstrumen || "";
+          const paketText =
+            s.pilihanPaket === "A"
+              ? "Paket A (4x pertemuan)"
+              : s.pilihanPaket === "B"
+              ? "Paket B (8x pertemuan)"
+              : s.pilihanPaket || "";
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${i + 1}</td>
+            <td>${s.id ?? ""}</td>
             <td>${s.namaSiswa ?? ""}</td>
             <td>${s.tempatLahir ?? ""}</td>
             <td>${s.tanggalLahir ?? ""}</td>
@@ -641,18 +674,8 @@
             <td>${s.noTelepon ?? ""}</td>
             <td>${s.namaOrtu ?? ""}</td>
             <td>${s.noTeleponOrtu ?? ""}</td>
-            <td>${
-              Array.isArray(s.pilihanIstrumen)
-                ? s.pilihanIstrumen.join(", ")
-                : s.pilihanIstrumen ?? ""
-            }</td>
-            <td>${
-              Array.isArray(s.pilihanGenre)
-                ? s.pilihanGenre.join(", ")
-                : s.pilihanGenre ?? ""
-            }</td>
-            <td>${s.kelas ?? ""}</td>
-            <td>${s.pilihanPaket ?? ""}</td>
+            <td>${instr}</td>
+            <td>${paketText}</td>
             <td class="text-nowrap">
               <button class="btn btn-sm btn-primary btn-edit" data-id="${
                 s.id
@@ -664,6 +687,7 @@
           tableBody.appendChild(tr);
         });
 
+        /* edit */
         document.querySelectorAll(".btn-edit").forEach((btn) => {
           btn.addEventListener("click", async (e) => {
             const id = e.currentTarget.dataset.id;
@@ -672,28 +696,33 @@
               return Swal.fire("Error", "Data tidak ditemukan", "error");
 
             studentIdInput.value = id;
+            studentIdView.value = id || "";
+            isEditingId = false;
+            studentIdView.disabled = true;
+            toggleEditIdBtn.textContent = "Ubah ID";
+
             namaSiswa.value = data.namaSiswa || "";
             tempatLahir.value = data.tempatLahir || "";
             tanggalLahir.value = data.tanggalLahir || "";
             jenisKelamin.value = data.jenisKelamin || "";
-            kelas.value = data.kelas || "";
             alamat.value = data.alamat || "";
             noTelepon.value = data.noTelepon || "";
             namaOrtu.value = data.namaOrtu || "";
             noTeleponOrtu.value = data.noTeleponOrtu || "";
-            setMultiSelectValues(
-              pilihanIstrumen,
-              Array.isArray(data.pilihanIstrumen) ? data.pilihanIstrumen : []
-            );
-            setMultiSelectValues(
-              pilihanGenre,
-              Array.isArray(data.pilihanGenre) ? data.pilihanGenre : []
-            );
+
+            const arr = Array.isArray(data.pilihanIstrumen)
+              ? data.pilihanIstrumen
+              : data.pilihanIstrumen
+              ? String(data.pilihanIstrumen).split(/,\s*/).filter(Boolean)
+              : [];
+            setMultiSelectValues(pilihanIstrumen, arr);
             pilihanPaket.value = data.pilihanPaket || "";
+
             modal.show();
           });
         });
 
+        /* delete */
         document.querySelectorAll(".btn-delete").forEach((btn) => {
           btn.addEventListener("click", async (e) => {
             const id = e.currentTarget.dataset.id;
@@ -712,210 +741,70 @@
         });
       }
 
-      // Add
+      /* Tambah */
       document.getElementById("btnAddStudent").addEventListener("click", () => {
         studentForm.reset();
         studentIdInput.value = "";
+        studentIdView.value = "";
+        isEditingId = false;
+        studentIdView.disabled = true;
+        toggleEditIdBtn.textContent = "Ubah ID";
         setMultiSelectValues(pilihanIstrumen, []);
-        setMultiSelectValues(pilihanGenre, []);
+        validateInstrumenRequired();
         modal.show();
       });
 
-      // Submit
-      studentForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        if (!studentForm.checkValidity()) {
-          studentForm.classList.add("was-validated");
-          return;
+      /* ===== Helpers data ===== */
+      const INSTRUMEN_OPSI = new Set([
+        "Gitar Klasik",
+        "Gitar Pop",
+        "Piano Klasik",
+        "Piano Pop",
+        "Biola Klasik",
+        "Biola Pop",
+        "Vocal",
+        "Drum",
+        "Keyboard",
+      ]);
+      function normalizeInstrumen(raw) {
+        const v = String(raw || "").trim();
+        if (!v) return "";
+        for (const o of INSTRUMEN_OPSI) {
+          if (o.toLowerCase() === v.toLowerCase()) return o;
         }
-        const payload = {
-          namaSiswa: namaSiswa.value.trim(),
-          tempatLahir: tempatLahir.value.trim(),
-          tanggalLahir: tanggalLahir.value,
-          jenisKelamin: jenisKelamin.value,
-          kelas: kelas.value,
-          alamat: alamat.value.trim(),
-          noTelepon: noTelepon.value.trim(),
-          namaOrtu: namaOrtu.value.trim(),
-          noTeleponOrtu: noTeleponOrtu.value.trim(),
-          pilihanIstrumen: getMultiSelectValues(pilihanIstrumen),
-          pilihanGenre: getMultiSelectValues(pilihanGenre),
-          pilihanPaket: pilihanPaket.value,
-        };
-        const id = studentIdInput.value;
-
-        Swal.showLoading();
-        try {
-          if (id) {
-            await updateStudent(id, payload);
-            Swal.fire("Berhasil", "Data siswa diperbarui.", "success");
-          } else {
-            await addStudent(payload);
-            Swal.fire("Berhasil", "Data siswa ditambahkan.", "success");
-          }
-          const inst = bootstrap.Modal.getInstance(modalEl);
-          if (inst) inst.hide();
-          studentForm.reset();
-          studentIdInput.value = "";
-        } catch (err) {
-          Swal.fire("Gagal", "Tidak dapat menyimpan data.", "error");
-        }
-      });
-
-      // Realtime
-      onStudentsSnapshot(renderStudents);
-
-      // ===== Export Excel =====
-      function toRow(s, i) {
-        return {
-          No: i + 1,
-          Nama: s.namaSiswa || "",
-          "Tempat Lahir": s.tempatLahir || "",
-          "Tanggal Lahir": s.tanggalLahir || "",
-          "Jenis Kelamin": s.jenisKelamin || "",
-          Alamat: s.alamat || "",
-          "No. Telepon": s.noTelepon || "",
-          "Nama Ortu/Wali": s.namaOrtu || "",
-          "No. Telp Ortu/Wali": s.noTeleponOrtu || "",
-          Instrumen: Array.isArray(s.pilihanIstrumen)
-            ? s.pilihanIstrumen.join(", ")
-            : s.pilihanIstrumen || "",
-          Genre: Array.isArray(s.pilihanGenre)
-            ? s.pilihanGenre.join(", ")
-            : s.pilihanGenre || "",
-          Kelas: s.kelas || "",
-          Paket: s.pilihanPaket || "",
-        };
+        const low = v.toLowerCase(),
+          has = (w) => low.includes(w);
+        if (has("gitar") && has("klasik")) return "Gitar Klasik";
+        if (has("gitar") && has("pop")) return "Gitar Pop";
+        if (has("piano") && has("klasik")) return "Piano Klasik";
+        if (has("piano") && has("pop")) return "Piano Pop";
+        if (has("biola") && has("klasik")) return "Biola Klasik";
+        if (has("biola") && has("pop")) return "Biola Pop";
+        if (has("vocal") || has("vokal")) return "Vocal";
+        if (has("drum")) return "Drum";
+        if (has("keyboard") || has("keybord")) return "Keyboard";
+        return "";
       }
-      btnExportExcel.addEventListener("click", () => {
-        if (!latestStudents || latestStudents.length === 0) {
-          return Swal.fire(
-            "Tidak ada data",
-            "Belum ada data siswa untuk diekspor.",
-            "info"
-          );
-        }
-        try {
-          const rows = latestStudents.map((s, i) => toRow(s, i));
-          const wb = XLSX.utils.book_new();
-          const ws = XLSX.utils.json_to_sheet(rows, {
-            header: Object.keys(rows[0]),
-          });
-          const colWidths = Object.keys(rows[0]).map(() => ({ wch: 20 }));
-          colWidths[1] = { wch: 28 }; // Nama
-          colWidths[5] = { wch: 40 }; // Alamat
-          ws["!cols"] = colWidths;
-          XLSX.utils.book_append_sheet(wb, ws, "Data Siswa");
-          const today = new Date();
-          const yyyy = today.getFullYear();
-          const mm = String(today.getMonth() + 1).padStart(2, "0");
-          const dd = String(today.getDate()).padStart(2, "0");
-          XLSX.writeFile(wb, `Data_Siswa_${yyyy}${mm}${dd}.xlsx`);
-        } catch (err) {
-          console.error(err);
-          Swal.fire("Gagal", "Terjadi kesalahan saat mengekspor.", "error");
-        }
-      });
-
-      // ======== IMPORT EXCEL (FIX TANGGAL & HP, IGNORE TIMESTAMP) ========
-      btnImportExcel.addEventListener("click", () => fileInput.click());
-
-      function normalizeHeader(h) {
-        const s = String(h || "")
+      function titleCaseNama(str = "") {
+        return String(str)
           .trim()
-          .toLowerCase();
-        if (!s) return "";
-        if (s.includes("timestamp")) return "__ignore"; // abaikan kolom timestamp
-        return s
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "") // remove diacritics
-          .replace(/\s+/g, " ")
-          .replace(/\s/g, "_")
-          .replace(/[^\w]+/g, "_");
+          .split(/\s+/)
+          .map((word) =>
+            word
+              .split(/([-'])/)
+              .map((part) => {
+                if (part === "-" || part === "'") return part;
+                return (
+                  part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+                );
+              })
+              .join("")
+          )
+          .join(" ");
       }
-
-      const headerMap = [
-        {
-          keys: ["nama_siswa", "nama", "nama_lengkap", "nama_peserta"],
-          field: "namaSiswa",
-        },
-        { keys: ["tempat_lahir", "tempat"], field: "tempatLahir" },
-        {
-          keys: ["tanggal_lahir", "tgl_lahir", "tanggal"],
-          field: "tanggalLahir",
-        },
-        { keys: ["jenis_kelamin", "jk", "gender"], field: "jenisKelamin" },
-        {
-          keys: [
-            "alamat",
-            "alamat_sekarang",
-            "alamat_domilisi",
-            "alamat_rumah",
-          ],
-          field: "alamat",
-        },
-        {
-          keys: [
-            "no_telepon",
-            "no_telp",
-            "nomor_telepon",
-            "no_hp",
-            "nomor_hp",
-            "hp",
-            "telp",
-          ],
-          field: "noTelepon",
-        },
-        {
-          keys: [
-            "nama_ortu_wali",
-            "nama_ortu",
-            "nama_wali",
-            "orangtua",
-            "nama_orangtua",
-          ],
-          field: "namaOrtu",
-        },
-        {
-          keys: [
-            "no_telp_ortu_wali",
-            "no_telp_ortu",
-            "no_telp_wali",
-            "telp_ortu",
-            "hp_ortu",
-            "nomor_hp_ortu",
-            "nomor_telp_ortu",
-          ],
-          field: "noTeleponOrtu",
-        },
-        {
-          keys: [
-            "instrumen",
-            "pilihan_instrumen",
-            "alat_musik",
-            "instrumen_yang_dipilih",
-          ],
-          field: "pilihanIstrumen",
-        },
-        {
-          keys: ["genre", "pilihan_genre", "genre_yang_disukai"],
-          field: "pilihanGenre",
-        },
-        { keys: ["kelas"], field: "kelas" },
-        { keys: ["paket", "paket_pertemuan"], field: "pilihanPaket" },
-      ];
-
-      function findFieldByHeader(normalized) {
-        for (const m of headerMap) {
-          if (m.keys.includes(normalized)) return m.field;
-        }
-        return null;
-      }
-
       function pad2(n) {
         return String(n).padStart(2, "0");
       }
-
       function excelSerialToYMD(n) {
         if (
           window.XLSX &&
@@ -932,127 +821,374 @@
           d.getUTCDate()
         )}`;
       }
-
       function parseDateStringToYMD(s) {
         if (!s) return "";
         const str = String(s).trim();
-        let m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); // yyyy-mm-dd
+        let m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
         if (m) return `${m[1]}-${pad2(m[2])}-${pad2(m[3])}`;
-        m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/); // dd/mm/yyyy atau dd-mm-yyyy
+        m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
         if (m) return `${m[3]}-${pad2(m[2])}-${pad2(m[1])}`;
         const d = new Date(str);
-        if (!isNaN(d.valueOf())) {
+        if (!isNaN(d.valueOf()))
           return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(
             d.getDate()
           )}`;
-        }
         return str;
       }
-
       function normalizePhone(s) {
         if (s === null || s === undefined) return "";
-        const raw = String(s).trim();
-        const digits = raw.replace(/[^\d]/g, ""); // pertahankan nol depan
-        return digits;
+        return String(s).trim().replace(/[^\d]/g, "");
+      }
+      function sanitizeId(id) {
+        return String(id || "").trim();
+      }
+      function isValidId(id) {
+        return /^[a-zA-Z0-9_\-]{4,128}$/.test(id);
       }
 
-      function splitMulti(val) {
-        if (!val && val !== 0) return [];
-        return String(val)
-          .split(/[,;\n]/)
-          .map((v) => v.trim())
-          .filter(Boolean);
+      /* ===== Migrasi ID (clone → update refs → delete) ===== */
+      async function changeStudentId(oldId, newId, payload) {
+        const newRef = doc(db, STUDENTS_COL, newId);
+        const newSnap = await getDoc(newRef);
+        if (newSnap.exists())
+          throw new Error("ID baru sudah digunakan. Pilih ID lain.");
+
+        // 1) buat dok baru
+        await setDoc(newRef, { ...payload });
+
+        // 2) update referensi di koleksi 'nilai'
+        const q = query(
+          collection(db, NILAI_COL),
+          where("siswaId", "==", oldId)
+        );
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          let batch = writeBatch(db);
+          let count = 0;
+          snap.forEach((docSnap) => {
+            batch.update(docSnap.ref, { siswaId: newId });
+            count++;
+            if (count % 450 === 0) {
+              batch.commit();
+              batch = writeBatch(db);
+            }
+          });
+          await batch.commit();
+        }
+
+        // 3) hapus dok lama
+        await deleteDoc(doc(db, STUDENTS_COL, oldId));
+      }
+
+      /* ===== Submit ===== */
+      studentForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        validateInstrumenRequired();
+        if (!studentForm.checkValidity()) {
+          studentForm.classList.add("was-validated");
+          return;
+        }
+        const payload = {
+          namaSiswa: titleCaseNama(namaSiswa.value.trim()),
+          tempatLahir: tempatLahir.value.trim(),
+          tanggalLahir: tanggalLahir.value,
+          jenisKelamin: jenisKelamin.value,
+          alamat: alamat.value.trim(),
+          noTelepon: noTelepon.value.trim(),
+          namaOrtu: titleCaseNama(namaOrtu.value.trim()),
+          noTeleponOrtu: noTeleponOrtu.value.trim(),
+          pilihanIstrumen: getMultiSelectValues(pilihanIstrumen),
+          pilihanPaket: pilihanPaket.value,
+        };
+        const oldId = studentIdInput.value || "";
+        const newIdRaw = sanitizeId(studentIdView.value);
+        const willChangeId =
+          !!oldId && isEditingId && newIdRaw && newIdRaw !== oldId;
+
+        Swal.showLoading();
+        try {
+          if (!oldId) {
+            // tambah: id auto
+            await addStudent(payload);
+            Swal.fire("Berhasil", "Data siswa ditambahkan.", "success");
+          } else if (willChangeId) {
+            if (!isValidId(newIdRaw))
+              throw new Error(
+                "Format ID tidak valid. Gunakan huruf/angka/-/_ (4–128)."
+              );
+            const ask = await Swal.fire({
+              title: "Ganti ID Siswa?",
+              html: `Dari <b>${oldId}</b> ke <b>${newIdRaw}</b>.<br>Semua data nilai terkait akan ikut dipindah.`,
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Ya, ganti ID",
+              cancelButtonText: "Batal",
+            });
+            if (!ask.isConfirmed) return;
+            await changeStudentId(oldId, newIdRaw, payload);
+            Swal.fire(
+              "Sukses",
+              `ID siswa sudah diganti menjadi <b>${newIdRaw}</b>.`,
+              "success"
+            );
+          } else {
+            await updateStudent(oldId, payload);
+            Swal.fire("Berhasil", "Data siswa diperbarui.", "success");
+          }
+
+          const inst = bootstrap.Modal.getInstance(modalEl);
+          if (inst) inst.hide();
+          studentForm.reset();
+          studentIdInput.value = "";
+          studentIdView.value = "";
+          isEditingId = false;
+          studentIdView.disabled = true;
+          toggleEditIdBtn.textContent = "Ubah ID";
+        } catch (err) {
+          console.error(err);
+          Swal.fire(
+            "Gagal",
+            err?.message || "Tidak dapat menyimpan data.",
+            "error"
+          );
+        }
+      });
+
+      /* ===== Snapshot realtime ===== */
+      onStudentsSnapshot(renderStudents);
+
+      /* ===== Export Excel ===== */
+      function toRow(s, i) {
+        const instr = Array.isArray(s.pilihanIstrumen)
+          ? s.pilihanIstrumen.join(", ")
+          : s.pilihanIstrumen || "";
+        const paketText =
+          s.pilihanPaket === "A"
+            ? "Paket A (4x pertemuan)"
+            : s.pilihanPaket === "B"
+            ? "Paket B (8x pertemuan)"
+            : s.pilihanPaket || "";
+        return {
+          No: i + 1,
+          ID: s.id || "",
+          Nama: s.namaSiswa || "",
+          "Tempat Lahir": s.tempatLahir || "",
+          "Tanggal Lahir": s.tanggalLahir || "",
+          "Jenis Kelamin": s.jenisKelamin || "",
+          Alamat: s.alamat || "",
+          "No Hp": s.noTelepon || "",
+          "Nama Orang Tua": s.namaOrtu || "",
+          "No Hp Orang Tua": s.noTeleponOrtu || "",
+          "Pilihan Instrumen": instr,
+          "Pilihan Paket Pertemuan": paketText,
+        };
+      }
+      btnExportExcel.addEventListener("click", () => {
+        if (!latestStudents || latestStudents.length === 0)
+          return Swal.fire(
+            "Tidak ada data",
+            "Belum ada data siswa untuk diekspor.",
+            "info"
+          );
+        try {
+          const rows = latestStudents.map((s, i) => toRow(s, i));
+          const wb = XLSX.utils.book_new();
+          const ws = XLSX.utils.json_to_sheet(rows, {
+            header: Object.keys(rows[0]),
+          });
+          ws["!cols"] = Object.keys(rows[0]).map(() => ({ wch: 22 }));
+          ws["!cols"][1] = { wch: 20 }; // ID
+          ws["!cols"][2] = { wch: 28 }; // Nama
+          ws["!cols"][6] = { wch: 40 }; // Alamat
+          XLSX.utils.book_append_sheet(wb, ws, "Data Siswa");
+          const d = new Date(),
+            fn = `Data_Siswa_${d.getFullYear()}${String(
+              d.getMonth() + 1
+            ).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}.xlsx`;
+          XLSX.writeFile(wb, fn);
+        } catch (err) {
+          console.error(err);
+          Swal.fire("Gagal", "Terjadi kesalahan saat mengekspor.", "error");
+        }
+      });
+
+      /* ===== Import Excel ===== */
+      btnImportExcel.addEventListener("click", () => fileInput.click());
+
+      function normalizeHeader(h) {
+        const s = String(h || "")
+          .trim()
+          .toLowerCase();
+        if (!s) return "";
+        if (s.includes("timestamp")) return "__ignore";
+        return s
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/\s+/g, " ")
+          .replace(/\s/g, "_")
+          .replace(/[^\w]+/g, "_");
+      }
+      const headerMap = [
+        { keys: ["id", "doc_id", "id_siswa"], field: "__id_opt" }, // opsional: kolom ID custom di Excel
+        { keys: ["nama"], field: "namaSiswa" },
+        { keys: ["tempat_lahir", "tempat"], field: "tempatLahir" },
+        {
+          keys: ["tanggal_lahir", "tgl_lahir", "tanggal"],
+          field: "tanggalLahir",
+        },
+        { keys: ["jenis_kelamin", "jk", "gender"], field: "jenisKelamin" },
+        { keys: ["alamat"], field: "alamat" },
+        {
+          keys: [
+            "no_hp",
+            "nohp",
+            "hp",
+            "nomor_hp",
+            "no_telepon",
+            "no_telp",
+            "nomor_telepon",
+          ],
+          field: "noTelepon",
+        },
+        {
+          keys: [
+            "nama_orang_tua",
+            "orang_tua",
+            "nama_ortu",
+            "nama_ortu_wali",
+            "nama_wali",
+            "orangtua",
+          ],
+          field: "namaOrtu",
+        },
+        {
+          keys: [
+            "no_hp_orang_tua",
+            "no_telp_orang_tua",
+            "hp_orang_tua",
+            "no_telp_ortu",
+            "no_telp_ortu_wali",
+            "nomor_hp_ortu",
+            "nomor_telp_ortu",
+            "hp_ortu",
+          ],
+          field: "noTeleponOrtu",
+        },
+        {
+          keys: ["pilihan_instrumen", "instrumen", "alat_musik"],
+          field: "pilihanIstrumen",
+        },
+        { keys: ["pilihan_genre", "genre"], field: "__ignore" },
+        {
+          keys: ["pilihan_paket_pertemuan", "paket", "paket_pertemuan"],
+          field: "pilihanPaket",
+        },
+      ];
+      function findFieldByHeader(n) {
+        for (const m of headerMap) if (m.keys.includes(n)) return m.field;
+        return null;
       }
 
       function toPayloadFromRow(rowObj) {
-        const payload = {
-          namaSiswa: "",
-          tempatLahir: "",
-          tanggalLahir: "",
-          jenisKelamin: "",
-          kelas: "",
-          alamat: "",
-          noTelepon: "",
-          namaOrtu: "",
-          noTeleponOrtu: "",
-          pilihanIstrumen: [],
-          pilihanGenre: [],
-          pilihanPaket: "",
+        const out = {
+          idOpt: "",
+          payload: {
+            namaSiswa: "",
+            tempatLahir: "",
+            tanggalLahir: "",
+            jenisKelamin: "",
+            alamat: "",
+            noTelepon: "",
+            namaOrtu: "",
+            noTeleponOrtu: "",
+            pilihanIstrumen: [],
+            pilihanPaket: "",
+          },
         };
-
         for (const [rawHeader, value] of Object.entries(rowObj)) {
           const norm = normalizeHeader(rawHeader);
           if (norm === "__ignore" || !norm) continue;
           const field = findFieldByHeader(norm);
-          if (!field) continue;
+          if (!field || field === "__ignore") continue;
 
-          if (field === "pilihanIstrumen" || field === "pilihanGenre") {
-            payload[field] = splitMulti(value);
-          } else if (field === "tanggalLahir") {
-            if (typeof value === "number") {
-              payload.tanggalLahir = excelSerialToYMD(value);
-            } else {
-              payload.tanggalLahir = parseDateStringToYMD(value);
-            }
+          if (field === "__id_opt") {
+            out.idOpt = String(value ?? "").trim();
+            continue;
+          }
+          if (field === "tanggalLahir") {
+            out.payload.tanggalLahir =
+              typeof value === "number"
+                ? excelSerialToYMD(value)
+                : parseDateStringToYMD(value);
           } else if (field === "noTelepon" || field === "noTeleponOrtu") {
-            payload[field] = normalizePhone(value);
+            out.payload[field] = normalizePhone(value);
+          } else if (field === "pilihanIstrumen") {
+            const arr = String(value || "")
+              .split(/[,;\n]/)
+              .map((s) => normalizeInstrumen(s))
+              .filter(Boolean);
+            out.payload.pilihanIstrumen = [...new Set(arr)];
+          } else if (field === "pilihanPaket") {
+            const raw = String(value ?? "")
+              .trim()
+              .toLowerCase();
+            out.payload.pilihanPaket =
+              raw.startsWith("a") || raw.includes("4x")
+                ? "A"
+                : raw.startsWith("b") || raw.includes("8x")
+                ? "B"
+                : "";
           } else {
-            payload[field] = (value ?? "").toString().trim();
+            out.payload[field] = String(value ?? "").trim();
           }
         }
-        return payload;
+        out.payload.namaSiswa = titleCaseNama(out.payload.namaSiswa);
+        out.payload.namaOrtu = titleCaseNama(out.payload.namaOrtu);
+        return out;
       }
 
       fileInput.addEventListener("change", async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
-
         try {
           const data = await file.arrayBuffer();
           const wb = XLSX.read(data, { type: "array", cellDates: true });
           const ws = wb.Sheets[wb.SheetNames[0]];
           const json = XLSX.utils.sheet_to_json(ws, { defval: "", raw: true });
-
           if (!json.length) {
             fileInput.value = "";
             return Swal.fire("Kosong", "File tidak berisi data.", "info");
           }
 
-          const payloads = json
+          const items = json
             .map((r) => toPayloadFromRow(r))
-            .filter((p) => p.namaSiswa);
-
-          if (!payloads.length) {
+            .filter((x) => x.payload.namaSiswa);
+          if (!items.length) {
             fileInput.value = "";
             return Swal.fire(
               "Tidak cocok",
-              "Tidak ada baris yang cocok dengan skema (pastikan kolom nama siswa ada).",
+              "Pastikan kolom 'Nama' ada.",
               "warning"
             );
           }
 
-          const preview = payloads
+          const preview = items
             .slice(0, 5)
             .map(
-              (p, i) =>
-                `${i + 1}. ${p.namaSiswa} — ${
-                  p.pilihanIstrumen.join(", ") || "-"
-                }${
-                  p.kelas ? " / Kelas " + p.kelas : ""
-                }<br><span style="opacity:.75">TTL: ${p.tempatLahir || "-"}, ${
-                  p.tanggalLahir || "-"
-                }</span><br><span style="opacity:.75">HP: ${
-                  p.noTelepon || "-"
-                }</span>`
+              (x, i) =>
+                `${i + 1}. ${x.payload.namaSiswa} — ${
+                  (x.payload.pilihanIstrumen || []).join(", ") || "-"
+                }<br><span style="opacity:.75">TTL: ${
+                  x.payload.tempatLahir || "-"
+                }, ${x.payload.tanggalLahir || "-"}</span>`
             )
             .join("<br><br>");
-
           const { isConfirmed } = await Swal.fire({
             title: "Import Excel?",
             html: `Akan mengimpor <b>${
-              payloads.length
+              items.length
             }</b> baris.<br><br><div class="text-start small">${preview}${
-              payloads.length > 5 ? "<br>..." : ""
+              items.length > 5 ? "<br>..." : ""
             }</div>`,
             icon: "question",
             showCancelButton: true,
@@ -1065,22 +1201,38 @@
             return;
           }
 
+          // Dupe key
           const dupeKey = (s) =>
             `${(s.namaSiswa || "").toLowerCase()}|${s.tanggalLahir || ""}`;
-          const existingKeys = new Set(latestStudents.map(dupeKey));
+          const existingKeys = new Set((latestStudents || []).map(dupeKey));
 
           let ok = 0,
             skip = 0,
             fail = 0;
           Swal.showLoading();
-          for (const p of payloads) {
-            const key = dupeKey(p);
+          for (const it of items) {
+            const key = dupeKey(it.payload);
             if (existingKeys.has(key)) {
               skip++;
               continue;
             }
+
+            const customId =
+              it.idOpt && /^[a-zA-Z0-9_\-]{4,128}$/.test(it.idOpt)
+                ? it.idOpt
+                : null;
             try {
-              await addStudent(p);
+              if (customId) {
+                const ref = doc(db, STUDENTS_COL, customId);
+                const snap = await getDoc(ref);
+                if (snap.exists()) {
+                  await addStudent(it.payload); // fallback
+                } else {
+                  await setDoc(ref, it.payload);
+                }
+              } else {
+                await addStudent(it.payload);
+              }
               ok++;
             } catch (err) {
               console.error(err);
@@ -1104,6 +1256,9 @@
           fileInput.value = "";
         }
       });
+
+      // Start realtime
+      onStudentsSnapshot(renderStudents);
     </script>
 
     <!-- Optional libs -->

@@ -12,6 +12,10 @@ import {
   serverTimestamp,
   orderBy,
   query,
+  setDoc,
+  where,
+  getDocs,
+  writeBatch,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   getAuth,
@@ -33,15 +37,15 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+export const db = getFirestore(app); // <-- PENTING: ekspor db
 const auth = getAuth(app);
 
 /* ========================
    2) Koleksi
 ======================== */
-const siswaCol = collection(db, "siswa"); // sudah ada (Data Siswa)
-const nilaiCol = collection(db, "nilai"); // baru (Data Nilai)
-const qrCol = collection(db, "qr"); // baru (Data QR)
+const siswaCol = collection(db, "siswa");
+const nilaiCol = collection(db, "nilai");
+const qrCol = collection(db, "qr");
 
 /* ========================
    3) Helpers
@@ -58,7 +62,7 @@ function sanitizeForFirestore(obj) {
 }
 
 /* ========================
-   4) SISWA: READ (Realtime)
+   4) SISWA: Realtime list
 ======================== */
 export function onStudentsSnapshot(callback) {
   const q = query(siswaCol, orderBy("namaSiswa"));
@@ -73,7 +77,7 @@ export function onStudentsSnapshot(callback) {
 }
 
 /* ========================
-   5) SISWA: READ (by id)
+   5) SISWA: by id
 ======================== */
 export async function getStudent(id) {
   try {
@@ -88,7 +92,7 @@ export async function getStudent(id) {
 }
 
 /* ========================
-   6) SISWA: CREATE
+   6) SISWA: CREATE (auto-ID)
 ======================== */
 export async function addStudent(payload) {
   try {
@@ -141,9 +145,8 @@ export async function deleteStudent(id) {
 }
 
 /* ========================
-   9) NILAI: CRUD
+   9) NILAI: CRUD ringkas
 ======================== */
-// Realtime list nilai (urut tanggal desc, lalu nama siswa kalau mau)
 export function onNilaiSnapshot(callback) {
   const q = query(nilaiCol, orderBy("tanggal", "desc"));
   return onSnapshot(
@@ -209,10 +212,10 @@ export async function deleteNilai(id) {
 }
 
 /* ========================
-   10) QR: CRUD
+   10) QR: CRUD singkat
 ======================== */
 export function onQrSnapshot(callback) {
-  const q = query(qrCol, orderBy("kode")); // bisa diubah ke createdAt desc
+  const q = query(qrCol, orderBy("kode"));
   return onSnapshot(
     q,
     (qs) => callback(qs.docs.map(withId)),
@@ -221,58 +224,6 @@ export function onQrSnapshot(callback) {
       alert("Gagal memuat data QR.");
     }
   );
-}
-export async function getQr(id) {
-  try {
-    const ref = doc(db, "qr", id);
-    const snap = await getDoc(ref);
-    return snap.exists() ? withId(snap) : null;
-  } catch (e) {
-    console.error("getQr error:", e);
-    alert("Gagal mengambil data QR.");
-    return null;
-  }
-}
-export async function addQr(payload) {
-  try {
-    const data = sanitizeForFirestore({
-      ...payload,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
-    const ref = await addDoc(qrCol, data);
-    return ref.id;
-  } catch (e) {
-    console.error("addQr error:", e);
-    alert(`Gagal menyimpan data QR: ${e.message || ""}`);
-    return null;
-  }
-}
-export async function updateQr(id, payload) {
-  try {
-    const ref = doc(db, "qr", id);
-    const data = sanitizeForFirestore({
-      ...payload,
-      updatedAt: serverTimestamp(),
-    });
-    await updateDoc(ref, data);
-    return true;
-  } catch (e) {
-    console.error("updateQr error:", e);
-    alert(`Gagal memperbarui data QR: ${e.message || ""}`);
-    return false;
-  }
-}
-export async function deleteQr(id) {
-  try {
-    const ref = doc(db, "qr", id);
-    await deleteDoc(ref);
-    return true;
-  } catch (e) {
-    console.error("deleteQr error:", e);
-    alert(`Gagal menghapus data QR: ${e.message || ""}`);
-    return false;
-  }
 }
 
 /* ========================
@@ -289,3 +240,18 @@ export async function signOut() {
     alert("Gagal logout.");
   }
 }
+
+/* ========================
+   12) Re-ekspos util Firestore (dipakai HTML)
+======================== */
+export {
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+  query,
+  where,
+  getDocs,
+  writeBatch,
+};
