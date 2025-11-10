@@ -65,6 +65,17 @@
       .page-link {
         cursor: pointer;
       }
+      /* Search row */
+      .search-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+      }
+      @media (max-width: 576px) {
+        .search-grid {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
 
@@ -215,6 +226,32 @@
             <div class="small-muted mt-2">
               Import menerima file .xlsx. Kolom “Timestamp” (jika ada) akan
               diabaikan otomatis.
+            </div>
+
+            <!-- Search Bar -->
+            <div class="card mt-3">
+              <div class="card-body">
+                <div class="search-grid">
+                  <div>
+                    <label class="form-label mb-1">Cari ID</label>
+                    <input
+                      type="text"
+                      id="searchId"
+                      class="form-control"
+                      placeholder="Ketik ID siswa..."
+                    />
+                  </div>
+                  <div>
+                    <label class="form-label mb-1">Cari Nama</label>
+                    <input
+                      type="text"
+                      id="searchNama"
+                      class="form-control"
+                      placeholder="Ketik nama siswa..."
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- hidden file input -->
@@ -592,6 +629,9 @@
       const pageInfo = document.getElementById("pageInfo");
       const paginationEl = document.getElementById("pagination");
 
+      const searchId = document.getElementById("searchId");
+      const searchNama = document.getElementById("searchNama");
+
       /* Auth (tetap) */
       const profileName = document.getElementById("profileName");
       const profilePhoto = document.getElementById("profilePhoto");
@@ -673,211 +713,7 @@
       }
       pilihanIstrumen.addEventListener("change", validateInstrumenRequired);
 
-      /* ===== STATE & PAGINATION ===== */
-      let latestStudents = [];
-      const pageSize = 10;
-      let currentPage = 1; // 1-based
-
-      function getTotalPages() {
-        return Math.max(1, Math.ceil(latestStudents.length / pageSize));
-      }
-      function clampPage(p) {
-        const t = getTotalPages();
-        return Math.min(Math.max(1, p), t);
-      }
-
-      function buildPagination() {
-        const total = latestStudents.length;
-        const totalPages = getTotalPages();
-        currentPage = clampPage(currentPage);
-
-        paginationEl.innerHTML = "";
-
-        // Helper to create li > a
-        const li = (disabled, active, label, gotoPage, aria) => {
-          const li = document.createElement("li");
-          li.className = `page-item${disabled ? " disabled" : ""}${
-            active ? " active" : ""
-          }`;
-          const a = document.createElement("a");
-          a.className = "page-link";
-          a.innerText = label;
-          if (aria) a.setAttribute("aria-label", aria);
-          if (!disabled)
-            a.addEventListener("click", () => {
-              setPage(gotoPage);
-            });
-          li.appendChild(a);
-          return li;
-        };
-
-        // First / Prev
-        paginationEl.appendChild(li(currentPage === 1, false, "«", 1, "First"));
-        paginationEl.appendChild(
-          li(currentPage === 1, false, "‹", currentPage - 1, "Previous")
-        );
-
-        // Page numbers (windowed)
-        const windowSize = 5;
-        const half = Math.floor(windowSize / 2);
-        let start = Math.max(1, currentPage - half);
-        let end = Math.min(getTotalPages(), start + windowSize - 1);
-        if (end - start + 1 < windowSize)
-          start = Math.max(1, end - windowSize + 1);
-
-        for (let p = start; p <= end; p++) {
-          paginationEl.appendChild(li(false, p === currentPage, String(p), p));
-        }
-
-        // Next / Last
-        paginationEl.appendChild(
-          li(currentPage === totalPages, false, "›", currentPage + 1, "Next")
-        );
-        paginationEl.appendChild(
-          li(currentPage === totalPages, false, "»", totalPages, "Last")
-        );
-
-        // Page info
-        const from = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-        const to = Math.min(total, currentPage * pageSize);
-        pageInfo.textContent = `Menampilkan ${from}–${to} dari ${total}`;
-      }
-
-      function setPage(p) {
-        currentPage = clampPage(p);
-        renderStudentsPage();
-      }
-
-      /* ===== RENDER (dengan pagination) ===== */
-      function renderStudentsPage() {
-        const total = latestStudents.length;
-        const tpages = getTotalPages();
-        currentPage = clampPage(currentPage);
-
-        tableBody.innerHTML = "";
-        if (total === 0) {
-          buildPagination();
-          return;
-        }
-
-        const startIndex = (currentPage - 1) * pageSize;
-        const endIndex = Math.min(total, startIndex + pageSize);
-        const slice = latestStudents.slice(startIndex, endIndex);
-
-        slice.forEach((s, i) => {
-          const instr = Array.isArray(s.pilihanIstrumen)
-            ? s.pilihanIstrumen.join(", ")
-            : s.pilihanIstrumen || "";
-          const paketText =
-            s.pilihanPaket === "A"
-              ? "Paket A (4x pertemuan)"
-              : s.pilihanPaket === "B"
-              ? "Paket B (8x pertemuan)"
-              : s.pilihanPaket || "";
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${startIndex + i + 1}</td>
-            <td>${s.id ?? ""}</td>
-            <td>${s.namaSiswa ?? ""}</td>
-            <td>${s.tempatLahir ?? ""}</td>
-            <td>${s.tanggalLahir ?? ""}</td>
-            <td>${s.jenisKelamin ?? ""}</td>
-            <td>${s.alamat ?? ""}</td>
-            <td>${s.noTelepon ?? ""}</td>
-            <td>${s.namaOrtu ?? ""}</td>
-            <td>${s.noTeleponOrtu ?? ""}</td>
-            <td>${instr}</td>
-            <td>${paketText}</td>
-            <td class="text-nowrap">
-              <button class="btn btn-sm btn-primary btn-edit" data-id="${
-                s.id
-              }">Edit</button>
-              <button class="btn btn-sm btn-danger btn-delete" data-id="${
-                s.id
-              }">Hapus</button>
-            </td>`;
-          tableBody.appendChild(tr);
-        });
-
-        // re-bind edit/delete on current page
-        document.querySelectorAll(".btn-edit").forEach((btn) => {
-          btn.addEventListener("click", async (e) => {
-            const id = e.currentTarget.dataset.id;
-            const data = await getStudent(id);
-            if (!data)
-              return Swal.fire("Error", "Data tidak ditemukan", "error");
-
-            studentIdInput.value = id;
-            studentIdView.value = id || "";
-            isEditingId = false;
-            studentIdView.disabled = true;
-            toggleEditIdBtn.textContent = "Ubah ID";
-
-            namaSiswa.value = data.namaSiswa || "";
-            tempatLahir.value = data.tempatLahir || "";
-            tanggalLahir.value = data.tanggalLahir || "";
-            jenisKelamin.value = data.jenisKelamin || "";
-            alamat.value = data.alamat || "";
-            noTelepon.value = data.noTelepon || "";
-            namaOrtu.value = data.namaOrtu || "";
-            noTeleponOrtu.value = data.noTeleponOrtu || "";
-
-            const arr = Array.isArray(data.pilihanIstrumen)
-              ? data.pilihanIstrumen
-              : data.pilihanIstrumen
-              ? String(data.pilihanIstrumen).split(/,\s*/).filter(Boolean)
-              : [];
-            setMultiSelectValues(pilihanIstrumen, arr);
-            pilihanPaket.value = data.pilihanPaket || "";
-
-            modal.show();
-          });
-        });
-
-        document.querySelectorAll(".btn-delete").forEach((btn) => {
-          btn.addEventListener("click", async (e) => {
-            const id = e.currentTarget.dataset.id;
-            const conf = await Swal.fire({
-              title: "Hapus data?",
-              text: "Tindakan ini tidak dapat dibatalkan.",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonText: "Ya, hapus",
-              cancelButtonText: "Batal",
-            });
-            if (!conf.isConfirmed) return;
-            await deleteStudent(id);
-
-            // setelah delete, kalau halaman jadi kosong, mundurkan halaman
-            const afterCount = latestStudents.length - 1;
-            const maxPage = Math.max(1, Math.ceil(afterCount / pageSize));
-            if (currentPage > maxPage) currentPage = maxPage;
-            Swal.fire("Dihapus", "Data siswa berhasil dihapus.", "success");
-          });
-        });
-
-        buildPagination();
-      }
-
-      function renderStudents(students) {
-        latestStudents = students;
-        renderStudentsPage();
-      }
-
-      /* Tambah */
-      document.getElementById("btnAddStudent").addEventListener("click", () => {
-        studentForm.reset();
-        studentIdInput.value = "";
-        studentIdView.value = "";
-        isEditingId = false;
-        studentIdView.disabled = true;
-        toggleEditIdBtn.textContent = "Ubah ID";
-        setMultiSelectValues(pilihanIstrumen, []);
-        validateInstrumenRequired();
-        modal.show();
-      });
-
-      /* ===== Helpers data ===== */
+      /* ===== Helpers umum ===== */
       const INSTRUMEN_OPSI = new Set([
         "Gitar Klasik",
         "Gitar Pop",
@@ -968,6 +804,245 @@
       function isValidId(id) {
         return /^[a-zA-Z0-9_\-]{4,128}$/.test(id);
       }
+
+      // Normalisasi teks untuk pencarian (hilangkan aksen, lowercase)
+      function normText(s) {
+        return String(s ?? "")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .trim();
+      }
+
+      /* ===== STATE & PAGINATION+FILTER ===== */
+      let latestStudents = [];
+      let filteredStudents = null; // array atau null (jika tidak ada filter)
+      const pageSize = 10;
+      let currentPage = 1; // 1-based
+
+      function getDataSource() {
+        return filteredStudents && Array.isArray(filteredStudents)
+          ? filteredStudents
+          : latestStudents;
+      }
+      function getTotalPages() {
+        return Math.max(1, Math.ceil(getDataSource().length / pageSize));
+      }
+      function clampPage(p) {
+        const t = getTotalPages();
+        return Math.min(Math.max(1, p), t);
+      }
+
+      // Build pagination UI
+      function buildPagination() {
+        const total = getDataSource().length;
+        const totalPages = getTotalPages();
+        currentPage = clampPage(currentPage);
+
+        paginationEl.innerHTML = "";
+
+        const li = (disabled, active, label, gotoPage, aria) => {
+          const li = document.createElement("li");
+          li.className = `page-item${disabled ? " disabled" : ""}${
+            active ? " active" : ""
+          }`;
+          const a = document.createElement("a");
+          a.className = "page-link";
+          a.innerText = label;
+          if (aria) a.setAttribute("aria-label", aria);
+          if (!disabled)
+            a.addEventListener("click", () => {
+              setPage(gotoPage);
+            });
+          li.appendChild(a);
+          return li;
+        };
+
+        // First / Prev
+        paginationEl.appendChild(li(currentPage === 1, false, "«", 1, "First"));
+        paginationEl.appendChild(
+          li(currentPage === 1, false, "‹", currentPage - 1, "Previous")
+        );
+
+        // Page numbers (window 5)
+        const windowSize = 5;
+        const half = Math.floor(windowSize / 2);
+        let start = Math.max(1, currentPage - half);
+        let end = Math.min(getTotalPages(), start + windowSize - 1);
+        if (end - start + 1 < windowSize)
+          start = Math.max(1, end - windowSize + 1);
+
+        for (let p = start; p <= end; p++) {
+          paginationEl.appendChild(li(false, p === currentPage, String(p), p));
+        }
+
+        // Next / Last
+        paginationEl.appendChild(
+          li(currentPage === totalPages, false, "›", currentPage + 1, "Next")
+        );
+        paginationEl.appendChild(
+          li(currentPage === totalPages, false, "»", totalPages, "Last")
+        );
+
+        // Page info
+        const from = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+        const to = Math.min(total, currentPage * pageSize);
+        pageInfo.textContent = `Menampilkan ${from}–${to} dari ${total}`;
+      }
+
+      function setPage(p) {
+        currentPage = clampPage(p);
+        renderStudentsPage();
+      }
+
+      // Render tabel sesuai halaman & filter
+      function renderStudentsPage() {
+        const data = getDataSource();
+        const total = data.length;
+        currentPage = clampPage(currentPage);
+
+        tableBody.innerHTML = "";
+        if (total === 0) {
+          buildPagination();
+          return;
+        }
+
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = Math.min(total, startIndex + pageSize);
+        const slice = data.slice(startIndex, endIndex);
+
+        slice.forEach((s, i) => {
+          const instr = Array.isArray(s.pilihanIstrumen)
+            ? s.pilihanIstrumen.join(", ")
+            : s.pilihanIstrumen || "";
+          const paketText =
+            s.pilihanPaket === "A"
+              ? "Paket A (4x pertemuan)"
+              : s.pilihanPaket === "B"
+              ? "Paket B (8x pertemuan)"
+              : s.pilihanPaket || "";
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${startIndex + i + 1}</td>
+            <td>${s.id ?? ""}</td>
+            <td>${s.namaSiswa ?? ""}</td>
+            <td>${s.tempatLahir ?? ""}</td>
+            <td>${s.tanggalLahir ?? ""}</td>
+            <td>${s.jenisKelamin ?? ""}</td>
+            <td>${s.alamat ?? ""}</td>
+            <td>${s.noTelepon ?? ""}</td>
+            <td>${s.namaOrtu ?? ""}</td>
+            <td>${s.noTeleponOrtu ?? ""}</td>
+            <td>${instr}</td>
+            <td>${paketText}</td>
+            <td class="text-nowrap">
+              <button class="btn btn-sm btn-primary btn-edit" data-id="${
+                s.id
+              }">Edit</button>
+              <button class="btn btn-sm btn-danger btn-delete" data-id="${
+                s.id
+              }">Hapus</button>
+            </td>`;
+          tableBody.appendChild(tr);
+        });
+
+        // Re-bind edit/delete untuk halaman aktif
+        document.querySelectorAll(".btn-edit").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.currentTarget.dataset.id;
+            const data = await getStudent(id);
+            if (!data)
+              return Swal.fire("Error", "Data tidak ditemukan", "error");
+
+            studentIdInput.value = id;
+            studentIdView.value = id || "";
+            isEditingId = false;
+            studentIdView.disabled = true;
+            toggleEditIdBtn.textContent = "Ubah ID";
+
+            namaSiswa.value = data.namaSiswa || "";
+            tempatLahir.value = data.tempatLahir || "";
+            tanggalLahir.value = data.tanggalLahir || "";
+            jenisKelamin.value = data.jenisKelamin || "";
+            alamat.value = data.alamat || "";
+            noTelepon.value = data.noTelepon || "";
+            namaOrtu.value = data.namaOrtu || "";
+            noTeleponOrtu.value = data.noTeleponOrtu || "";
+
+            const arr = Array.isArray(data.pilihanIstrumen)
+              ? data.pilihanIstrumen
+              : data.pilihanIstrumen
+              ? String(data.pilihanIstrumen).split(/,\s*/).filter(Boolean)
+              : [];
+            setMultiSelectValues(pilihanIstrumen, arr);
+            pilihanPaket.value = data.pilihanPaket || "";
+
+            modal.show();
+          });
+        });
+
+        document.querySelectorAll(".btn-delete").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.currentTarget.dataset.id;
+            const conf = await Swal.fire({
+              title: "Hapus data?",
+              text: "Tindakan ini tidak dapat dibatalkan.",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Ya, hapus",
+              cancelButtonText: "Batal",
+            });
+            if (!conf.isConfirmed) return;
+            await deleteStudent(id);
+
+            // Sesuaikan halaman setelah hapus
+            const afterCount = getDataSource().length - 1;
+            const maxPage = Math.max(1, Math.ceil(afterCount / pageSize));
+            if (currentPage > maxPage) currentPage = maxPage;
+            Swal.fire("Dihapus", "Data siswa berhasil dihapus.", "success");
+          });
+        });
+
+        buildPagination();
+      }
+
+      function renderStudents(students) {
+        latestStudents = students;
+        applyFilterAndRender(); // selalu re-apply filter saat data realtime berubah
+      }
+
+      /* ====== FILTER (Cari ID & Nama) ====== */
+      function applyFilterAndRender() {
+        const qId = normText(searchId.value);
+        const qNama = normText(searchNama.value);
+
+        if (!qId && !qNama) {
+          filteredStudents = null; // tidak ada filter
+        } else {
+          filteredStudents = latestStudents.filter((s) => {
+            const id = normText(s.id);
+            const nama = normText(s.namaSiswa);
+            const matchId = qId ? id.includes(qId) : true;
+            const matchNama = qNama ? nama.includes(qNama) : true;
+            return matchId && matchNama;
+          });
+        }
+        currentPage = 1; // reset ke halaman pertama saat filter berubah
+        renderStudentsPage();
+      }
+
+      // Debounce input (supaya tidak render tiap ketik 1 huruf)
+      function debounce(fn, ms = 200) {
+        let t;
+        return (...args) => {
+          clearTimeout(t);
+          t = setTimeout(() => fn(...args), ms);
+        };
+      }
+      const onSearchChange = debounce(() => applyFilterAndRender(), 180);
+
+      searchId.addEventListener("input", onSearchChange);
+      searchNama.addEventListener("input", onSearchChange);
 
       /* ===== Migrasi ID (clone → update refs → delete) ===== */
       async function changeStudentId(oldId, newId, payload) {
@@ -1088,13 +1163,10 @@
 
       /* ===== Realtime ===== */
       onStudentsSnapshot((list) => {
-        latestStudents = list;
-        // kalau current page di luar range (mis import/delete), clamp
-        currentPage = clampPage(currentPage);
-        renderStudentsPage();
+        renderStudents(list);
       });
 
-      /* ===== Export Excel ===== */
+      /* ===== Export Excel (semua data, bukan yang terfilter) ===== */
       function toRow(s, i) {
         const instr = Array.isArray(s.pilihanIstrumen)
           ? s.pilihanIstrumen.join(", ")
@@ -1284,6 +1356,23 @@
         return out;
       }
 
+      const btnAddStudent = document.getElementById("btnAddStudent");
+      btnAddStudent.addEventListener("click", () => {
+        studentForm.reset();
+        studentIdInput.value = "";
+        studentIdView.value = "";
+        isEditingId = false;
+        studentIdView.disabled = true;
+        toggleEditIdBtn.textContent = "Ubah ID";
+        setMultiSelectValues(pilihanIstrumen, []);
+        validateInstrumenRequired();
+        modal.show();
+      });
+
+      const btnExport = btnExportExcel;
+      const btnImport = btnImportExcel;
+
+      btnImport.addEventListener("click", () => fileInput.click());
       fileInput.addEventListener("change", async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -1394,10 +1483,10 @@
         }
       });
 
-      // start realtime (render + pagination)
+      // Mulai realtime + render awal
       onStudentsSnapshot((list) => {
         latestStudents = list;
-        setPage(currentPage);
+        applyFilterAndRender();
       });
     </script>
 
