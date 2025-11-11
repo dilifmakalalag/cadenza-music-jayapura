@@ -250,7 +250,6 @@
                             <th>QR</th>
                             <th>Nama</th>
                             <th>Instrumen (Siswa)</th>
-                            <th>Predikat</th>
                             <th>Materi (Terakhir)</th>
                             <th>Instruktur</th>
                             <th>Profil</th>
@@ -401,7 +400,6 @@
             instrumenSiswa,
             profileUrl,
             qrUrl,
-            lastPredikat: toPredikat(last.nilai),
             lastMateri: last.materi,
             lastInstruktur: last.instruktur || "",
             lastTanggal: last.tanggal || "",
@@ -451,7 +449,7 @@
             <td><img class="qr-img" src="${r.qrUrl}" alt="QR ${r.nama}" /></td>
             <td>${r.nama}</td>
             <td>${joinArr(r.instrumenSiswa)}</td>
-            <td>${r.lastPredikat}</td>
+       
             <td>${materiToHtml(r.lastMateri) || "-"}</td>
             <td>${r.lastInstruktur || "-"}</td>
             <td class="truncate"><a href="${r.profileUrl}" target="_blank">${
