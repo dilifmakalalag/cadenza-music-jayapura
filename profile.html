@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CADENZA — Profil Siswa</title>
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Vendor CSS -->
     <link
       rel="stylesheet"
@@ -18,7 +26,78 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-      /* Dark-ish inputs/look to match other pages */
+      :root {
+        --glass-bg: rgba(255, 255, 255, 0.08);
+        --glass-bd: rgba(255, 255, 255, 0.12);
+        --text-dim: #d9d9d9;
+        --accent: #ffd369;
+      }
+
+      /* Background + base */
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%);
+        font-family: "Poppins", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        color: #f5f5f5;
+        padding: 24px;
+      }
+
+      /* Cards - glassmorphism */
+      .card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-bd);
+        border-radius: 18px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+      }
+
+      /* Section header */
+      .section-title {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.3px;
+        color: var(--accent);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+        display: inline-block;
+        padding-bottom: 0.25rem;
+      }
+
+      /* Sub labels */
+      .stat-label {
+        color: var(--text-dim);
+        font-size: 0.85rem;
+      }
+
+      .chip {
+        display: inline-block;
+        padding: 0.22rem 0.62rem;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #ff7eb3, #ff758c);
+        color: #fff;
+        margin: 0 0.35rem 0.35rem 0;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        white-space: nowrap;
+      }
+
+      .truncate {
+        max-width: 420px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Inputs to match dark look */
       .form-control,
       .form-select,
       .form-control:focus,
@@ -32,47 +111,74 @@
       }
       .form-control:focus,
       .form-select:focus {
-        border-color: var(--bs-secondary);
-        box-shadow: 0 0 0 0.2rem rgba(var(--bs-secondary-rgb), 0.25);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 0.2rem rgba(255, 211, 105, 0.25);
       }
-      .chip {
-        display: inline-block;
-        padding: 0.2rem 0.6rem;
+
+      /* Buttons */
+      .btn {
+        border-radius: 12px;
+        transition: all 0.25s ease;
+      }
+      .btn i {
+        vertical-align: -2px;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.95;
+      }
+
+      /* User chip (top right) */
+      .user-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.4rem 0.75rem;
         border-radius: 999px;
-        background: rgba(108, 117, 125, 0.25);
-        margin: 0 0.35rem 0.35rem 0;
-        font-size: 0.85rem;
+        border: 1px solid var(--glass-bd);
+        background: rgba(255, 255, 255, 0.06);
       }
+      .user-chip img {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+      }
+
+      /* QR image */
       .qr-img {
         width: 150px;
         height: 150px;
         object-fit: contain;
+        border-radius: 16px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
       }
-      .stat-label {
-        color: #6c757d;
-        font-size: 0.85rem;
+
+      /* Table */
+      .table {
+        color: #fff;
+        margin-bottom: 0;
       }
-      .section-title {
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+      #nilaiTable thead {
+        /* background: linear-gradient(135deg, #6e8efb, #a777e3); */
+        color: #fff;
+        border: none;
       }
-      .list-unstyled li {
-        margin-bottom: 0.25rem;
+      .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.12);
       }
       .table td,
       .table th {
         vertical-align: middle;
       }
-      #nilaiTable thead {
-        background-color: var(--bs-secondary);
-        color: #fff;
-      }
-      .truncate {
-        max-width: 360px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+
+      /* Print */
       @media print {
         .no-print {
           display: none !important;
@@ -82,6 +188,11 @@
         }
         body {
           background: #fff;
+          color: #000;
+        }
+        .chip {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
       }
     </style>
@@ -89,158 +200,156 @@
 
   <body>
     <div class="container-scroller">
-      <div class="container-fluidd">
-        <div class="">
-          <div class="content-wrapper">
-            <!-- Top actions -->
-            <div
-              class="d-flex flex-wrap align-items-center justify-content-between gap-2 no-print"
-            >
-              <div class="d-flex align-items-center gap-2">
-                <!-- <a
-                  href="javascript:history.back()"
-                  class="btn btn-outline-secondary btn-sm"
-                >
-                  <i class="mdi mdi-arrow-left"></i> Kembali
-                </a> -->
-                <button id="btnCopyUrl" class="btn btn-outline-primary btn-sm">
-                  <i class="mdi mdi-content-copy"></i> Salin URL Profil
-                </button>
-                <a
-                  id="btnDownloadQR"
-                  class="btn btn-outline-success btn-sm"
-                  download="qr-profil.png"
-                >
-                  <i class="mdi mdi-download"></i> Unduh QR
-                </a>
-                <button id="btnPrint" class="btn btn-outline-info btn-sm">
-                  <i class="mdi mdi-printer"></i> Cetak
-                </button>
-              </div>
-              <h4 class="mb-0">Profil Siswa</h4>
+      <div class="container-fluid">
+        <div class="content-wrapper">
+          <!-- Top bar actions -->
+          <div
+            class="d-flex flex-wrap align-items-center justify-content-between gap-2 no-print"
+          >
+            <div class="d-flex align-items-center gap-2">
+              <button id="btnCopyUrl" class="btn btn-outline-light btn-sm">
+                <i class="mdi mdi-content-copy"></i> Salin URL Profil
+              </button>
+              <a
+                id="btnDownloadQR"
+                class="btn btn-outline-success btn-sm"
+                download="qr-profil.png"
+              >
+                <i class="mdi mdi-download"></i> Unduh QR
+              </a>
+              <button id="btnPrint" class="btn btn-outline-info btn-sm">
+                <i class="mdi mdi-printer"></i> Cetak
+              </button>
             </div>
+          </div>
 
-            <!-- Profil + QR -->
-            <div class="row mt-3">
-              <div class="col-lg-12">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="section-title">Informasi Siswa</div>
-                    <div class="row g-3">
-                      <div class="col-md-6">
-                        <div class="stat-label">Nama Siswa</div>
-                        <div id="fNama" class="h5 mb-0">-</div>
-                      </div>
-                      <div class="col-md-3">
-                        <div class="stat-label">Jenis Kelamin</div>
-                        <div id="fJK">-</div>
-                      </div>
-                      <div class="col-md-3">
-                        <div class="stat-label">Kelas</div>
-                        <div id="fKelas">-</div>
-                      </div>
-
-                      <div class="col-md-6">
-                        <div class="stat-label">Tempat & Tanggal Lahir</div>
-                        <div id="fTTL" class="truncate">-</div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="stat-label">Alamat</div>
-                        <div id="fAlamat" class="truncate">-</div>
-                      </div>
-
-                      <div class="col-md-6">
-                        <div class="stat-label">Kontak Siswa</div>
-                        <div id="fTelp">-</div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="stat-label">Ortu/Wali</div>
-                        <div id="fOrtu">-</div>
-                        <div id="fTelpOrtu" class="text-muted small"></div>
-                      </div>
-
-                      <div class="col-12">
-                        <div class="stat-label">Instrumen</div>
-                        <div id="fInstrumen">-</div>
-                      </div>
-                      <div class="col-12">
-                        <div class="stat-label">Genre</div>
-                        <div id="fGenre">-</div>
-                      </div>
-                      <div class="col-12">
-                        <div class="stat-label">Paket</div>
-                        <div id="fPaket">-</div>
-                      </div>
+          <!-- Profil + QR -->
+          <div class="row mt-3">
+            <div class="col-lg-8">
+              <div class="card">
+                <div class="card-body">
+                  <div class="section-title">Informasi Siswa</div>
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="stat-label">Nama Siswa</div>
+                      <div id="fNama" class="h5 mb-0">-</div>
                     </div>
-                  </div>
-                </div>
-              </div>
+                    <div class="col-md-3">
+                      <div class="stat-label">Jenis Kelamin</div>
+                      <div id="fJK">-</div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="stat-label">Kelas</div>
+                      <div id="fKelas">-</div>
+                    </div>
 
-              <!-- <div class="col-lg-4">
-                <div class="card">
-                  <div class="card-body text-center">
-                    <div class="section-title">QR Profil</div>
-                    <img
-                      id="qrImg"
-                      class="qr-img mb-2"
-                      src=""
-                      alt="QR Profil"
-                    />
-                    <div class="text-muted small mb-2 truncate">
+                    <div class="col-md-6">
+                      <div class="stat-label">Tempat & Tanggal Lahir</div>
+                      <div id="fTTL" class="truncate">-</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="stat-label">Alamat</div>
+                      <div id="fAlamat" class="truncate">-</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="stat-label">Kontak Siswa</div>
+                      <div id="fTelp">-</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="stat-label">Ortu/Wali</div>
+                      <div id="fOrtu">-</div>
+                      <div id="fTelpOrtu" class="text-muted small"></div>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="stat-label">Instrumen</div>
+                      <div id="fInstrumen">-</div>
+                    </div>
+                    <div class="col-12">
+                      <div class="stat-label">Genre</div>
+                      <div id="fGenre">-</div>
+                    </div>
+                    <div class="col-12">
+                      <div class="stat-label">Paket</div>
+                      <div id="fPaket">-</div>
+                    </div>
+
+                    <div class="col-12 mt-2">
+                      <div class="stat-label">URL Profil</div>
                       <a
                         id="profileUrlA"
                         href="#"
                         target="_blank"
                         rel="noopener"
+                        class="text-decoration-underline small"
                         >-</a
                       >
                     </div>
-                    <div class="text-muted small">
-                      Scan untuk melihat profil & nilai siswa.
-                    </div>
                   </div>
                 </div>
-              </div> -->
+              </div>
             </div>
 
-            <!-- Riwayat Nilai -->
-            <div class="row mt-3">
-              <div class="col-12">
-                <div class="card">
-                  <div class="card-body">
-                    <div
-                      class="d-flex align-items-center justify-content-between"
-                    >
-                      <div class="section-title mb-0">Riwayat Nilai</div>
-                      <small id="countNilai" class="text-muted"></small>
-                    </div>
-                    <div class="table-responsive mt-2">
-                      <table
-                        id="nilaiTable"
-                        class="table table-striped table-hover align-middle"
-                      >
-                        <thead class="table-secondary">
-                          <tr>
-                            <th>#</th>
-                            <th>Tanggal</th>
-                            <th>Instrumen</th>
-                            <th>Instruktur</th>
-                            <th>Predikat</th>
-                            <th>Materi</th>
-                            <th>Tautan</th>
-                          </tr>
-                        </thead>
-                        <tbody></tbody>
-                      </table>
-                    </div>
-                    <small class="text-muted">Urut dari yang terbaru.</small>
+            <!-- QR -->
+            <div class="col-lg-4">
+              <div class="card h-100">
+                <div
+                  class="card-body text-center d-flex flex-column justify-content-center align-items-center"
+                >
+                  <div class="section-title">Cadenza Music Jayapura</div>
+                  <img
+                    id="qrImg"
+                    class="qr-img mb-2"
+                    src="Logo Cadenza.jpg"
+                    alt="QR Profil"
+                  />
+                  <div class="text-muted small">
+                    www.cadenzamusicjayapura.com
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <footer class="footer">
+          <!-- Riwayat Nilai -->
+          <div class="row mt-3">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <div class="section-title mb-0">Riwayat Nilai</div>
+                    <small id="countNilai" class="text-muted"></small>
+                  </div>
+
+                  <div class="table-responsive mt-2">
+                    <table
+                      id="nilaiTable"
+                      class="table table-striped table-hover align-middle"
+                    >
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Tanggal</th>
+                          <th>Instrumen</th>
+                          <th>Instruktur</th>
+                          <th>Predikat</th>
+                          <th>Materi</th>
+                          <th>Tautan</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                  <small class="text-muted">Urut dari yang terbaru.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="footer mt-3">
             <div
               class="d-sm-flex justify-content-center justify-content-sm-between"
             >
@@ -267,27 +376,30 @@
         onPredikatSnapshot,
       } from "./firebase.js";
 
-      // ===== Auth guard + profile =====
+      // ===== Auth guard + profile header =====
       const profileName = document.getElementById("profileName");
       const profilePhoto = document.getElementById("profilePhoto");
       const logoutBtn = document.getElementById("logoutBtn");
+
       onAuthStateChangedHandler((user) => {
         if (user) {
           profileName.textContent =
             user.displayName || user.email || "Pengguna";
           if (user.photoURL) profilePhoto.src = user.photoURL;
         } else {
-          // window.location.href = "login.html";
           profileName.textContent = "Pengguna";
           profilePhoto.src = "assets/images/faces/face15.jpg";
         }
       });
+
       logoutBtn?.addEventListener("click", async (e) => {
         e.preventDefault();
         const q = await Swal.fire({
           title: "Log out?",
           icon: "question",
           showCancelButton: true,
+          confirmButtonText: "Ya",
+          cancelButtonText: "Batal",
         });
         if (q.isConfirmed) await signOut();
       });
@@ -332,7 +444,8 @@
         return a.length
           ? a
               .map(
-                (v) => `<a href="${v}" target="_blank" rel="noopener">${v}</a>`
+                (v) =>
+                  `<a href="${v}" target="_blank" rel="noopener" class="text-decoration-underline">${v}</a>`
               )
               .join("<br/>")
           : "-";
@@ -409,8 +522,8 @@
           });
           btnPrint.addEventListener("click", () => window.print());
 
-          // Nilai siswa (filter client-side dari snapshot)
-          onNilaiSnapshot((rows) => {
+          // Nilai siswa (ambil dari snapshot dan filter client-side)
+          onPredikatSnapshot((rows) => {
             const mine = rows
               .filter((r) => r.siswaId === siswaId)
               .sort(
@@ -420,8 +533,8 @@
               );
 
             countNilai.textContent = `${mine.length} catatan`;
-
             nilaiTbody.innerHTML = "";
+
             mine.forEach((r, i) => {
               const tr = document.createElement("tr");
               tr.innerHTML = `
@@ -429,7 +542,11 @@
                 <td>${r.tanggal || "-"}</td>
                 <td>${r.instrumen || "-"}</td>
                 <td>${r.instruktur || "-"}</td>
-                <td>${typeof r.predikat === "number" ? r.predikat : "-"}</td>
+                <td>${
+                  typeof r.predikat === "number"
+                    ? r.predikat
+                    : r.predikat || "-"
+                }</td>
                 <td>${materiHtml(r.materi)}</td>
                 <td class="truncate">${tautanHtml(r.tautan)}</td>
               `;
