@@ -373,7 +373,7 @@
         onAuthStateChangedHandler,
         signOut,
         getStudent,
-        onPredikatSnapshot,
+        onNilaiSnapshot,
       } from "./firebase.js";
 
       // ===== Auth guard + profile header =====
@@ -523,7 +523,7 @@
           btnPrint.addEventListener("click", () => window.print());
 
           // Nilai siswa (ambil dari snapshot dan filter client-side)
-          onPredikatSnapshot((rows) => {
+          onNilaiSnapshot((rows) => {
             const mine = rows
               .filter((r) => r.siswaId === siswaId)
               .sort(
