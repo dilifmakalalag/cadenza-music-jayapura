@@ -422,6 +422,7 @@
     <!-- App -->
     <script type="module">
       import {
+        requireAuthRedirect,
         onAuthStateChangedHandler,
         signOut,
         onStudentsSnapshot,
@@ -431,7 +432,7 @@
         updateNilai,
         deleteNilai,
       } from "./firebase.js";
-
+      await requireAuthRedirect();
       // ===== Auth guard + profile =====
       const profileName = document.getElementById("profileName");
       const profilePhoto = document.getElementById("profilePhoto");

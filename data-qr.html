@@ -290,12 +290,13 @@
     <!-- App -->
     <script type="module">
       import {
+        requireAuthRedirect,
         onAuthStateChangedHandler,
         signOut,
         onStudentsSnapshot,
         onNilaiSnapshot,
       } from "./firebase.js";
-
+      await requireAuthRedirect();
       // === Auth Guard ===
       const profileName = document.getElementById("profileName");
       const profilePhoto = document.getElementById("profilePhoto");

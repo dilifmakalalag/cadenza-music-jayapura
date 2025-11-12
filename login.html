@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login — Cadenza</title>
+
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="assets/vendors/mdi/css/materialdesignicons.min.css"
+    />
+    <link rel="shortcut icon" href="assets/images/favicon.png" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      body {
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f1724, #2b2540);
+        color: #fff;
+        font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        margin: 0;
+      }
+      .card {
+        width: 420px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 28px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        text-align: center;
+      }
+      .logo {
+        width: 72px;
+        height: 72px;
+        border-radius: 12px;
+        object-fit: cover;
+        margin: 0 auto 16px;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: 20px;
+      }
+      p {
+        margin: 0 0 18px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .btn-google {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        background: #fff;
+        color: #111;
+        font-weight: 600;
+      }
+      .small-muted {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+        margin-top: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <img class="logo" src="assets/images/logo-mini.svg" alt="logo" />
+      <h1>Masuk — Cadenza</h1>
+      <p>Silakan masuk menggunakan akun Google untuk mengakses dashboard.</p>
+
+      <button id="btnGoogle" class="btn-google">
+        <span class="mdi mdi-google"></span>
+        Masuk dengan Google
+      </button>
+
+      <div class="small-muted" id="status">Belum masuk</div>
+    </div>
+
+    <script type="module">
+      import { signInWithGoogle, getCurrentUserOnce } from "./firebase.js";
+
+      const btn = document.getElementById("btnGoogle");
+      const status = document.getElementById("status");
+
+      // jika sudah login, redirect ke next
+      (async () => {
+        const user = await getCurrentUserOnce();
+        const params = new URLSearchParams(location.search);
+        const next = params.get("next") || "/public_html/index.html";
+        if (user) {
+          status.textContent = `Sudah masuk sebagai ${
+            user.displayName || user.email
+          }`;
+          // redirect singkat
+          setTimeout(() => (location.href = next), 600);
+        }
+      })();
+
+      btn.addEventListener("click", async () => {
+        try {
+          btn.disabled = true;
+          btn.textContent = "Membuka popup...";
+          const res = await signInWithGoogle();
+          const user = res.user;
+          const params = new URLSearchParams(location.search);
+          const next = params.get("next") || "/public_html/index.html";
+
+          // success feedback
+          await Swal.fire({
+            icon: "success",
+            title: "Berhasil masuk",
+            text: `Halo ${user.displayName || user.email}`,
+            timer: 900,
+            showConfirmButton: false,
+          });
+
+          // redirect ke halaman asal atau index
+          location.href = next;
+        } catch (e) {
+          console.error(e);
+          btn.disabled = false;
+          btn.innerHTML =
+            '<span class="mdi mdi-google"></span> Masuk dengan Google';
+          Swal.fire("Gagal masuk", e.message || e.toString(), "error");
+        }
+      });
+    </script>
+  </body>
+</html>

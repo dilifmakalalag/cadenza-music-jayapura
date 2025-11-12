@@ -29,6 +29,7 @@
     />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="shortcut icon" href="assets/images/favicon.png" />
+
     <style>
       .card .stat-value {
         font-size: 1.5rem;
@@ -40,9 +41,10 @@
       }
     </style>
   </head>
+
   <body class="bg-light">
     <div class="container-scroller">
-      <!-- Sidebar (samakan dengan data-siswa) -->
+      <!-- Sidebar -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div
           class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top"
@@ -89,9 +91,8 @@
         </ul>
       </nav>
 
-      <!-- page-body-wrapper -->
       <div class="container-fluid page-body-wrapper">
-        <!-- Navbar (burger + profile tetap) -->
+        <!-- Navbar -->
         <nav class="navbar p-0 fixed-top d-flex flex-row">
           <div
             class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center"
@@ -166,7 +167,6 @@
           <div class="content-wrapper">
             <h5 class="mb-3">Beranda</h5>
 
-            <!-- Cards disesuaikan dengan menu sidebar -->
             <div class="row">
               <!-- Total Siswa -->
               <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
@@ -174,9 +174,7 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="col-9">
-                        <div class="d-flex align-items-center">
-                          <h3 id="cardTotalSiswa" class="mb-0 stat-value">0</h3>
-                        </div>
+                        <h3 id="cardTotalSiswa" class="mb-0 stat-value">0</h3>
                       </div>
                       <div class="col-3">
                         <div class="icon icon-box-success">
@@ -189,15 +187,13 @@
                 </div>
               </div>
 
-              <!-- Total Nilai Terekam -->
+              <!-- Total Nilai -->
               <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="row">
                       <div class="col-9">
-                        <div class="d-flex align-items-center">
-                          <h3 id="cardTotalNilai" class="mb-0 stat-value">0</h3>
-                        </div>
+                        <h3 id="cardTotalNilai" class="mb-0 stat-value">0</h3>
                       </div>
                       <div class="col-3">
                         <div class="icon icon-box-success">
@@ -212,15 +208,13 @@
                 </div>
               </div>
 
-              <!-- Total QR Terbit -->
+              <!-- Total QR -->
               <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="row">
                       <div class="col-9">
-                        <div class="d-flex align-items-center">
-                          <h3 id="cardTotalQR" class="mb-0 stat-value">0</h3>
-                        </div>
+                        <h3 id="cardTotalQR" class="mb-0 stat-value">0</h3>
                       </div>
                       <div class="col-3">
                         <div class="icon icon-box-success">
@@ -235,17 +229,13 @@
                 </div>
               </div>
 
-              <!-- Paket Dominan -->
+              <!-- Paket Favorit -->
               <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="row">
                       <div class="col-9">
-                        <div class="d-flex align-items-center">
-                          <h3 id="cardPaketFavorit" class="mb-0 stat-value">
-                            -
-                          </h3>
-                        </div>
+                        <h3 id="cardPaketFavorit" class="mb-0 stat-value">-</h3>
                       </div>
                       <div class="col-3">
                         <div class="icon icon-box-success">
@@ -260,8 +250,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Ruang konten lain… -->
           </div>
 
           <footer class="footer">
@@ -278,42 +266,31 @@
       </div>
     </div>
 
-    <!-- plugins:js -->
+    <!-- JS -->
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
-    <script src="assets/vendors/chart.js/Chart.min.js"></script>
-    <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
-    <script src="assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
-    <script src="assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script src="assets/vendors/owl-carousel-2/owl.carousel.min.js"></script>
-    <script src="assets/js/off-canvas.js"></script>
-    <script src="assets/js/hoverable-collapse.js"></script>
-    <script src="assets/js/misc.js"></script>
-    <script src="assets/js/settings.js"></script>
-    <script src="assets/js/todolist.js"></script>
-
-    <!-- Firebase app logic (auth guard + load angka kartu) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module">
       import {
+        requireAuthRedirect,
         onAuthStateChangedHandler,
         signOut,
-        // (opsional) tambahkan fungsi agregasi untuk mengisi kartu di dashboard
-        // e.g. countStudents, countGrades, countQR
+        db,
       } from "./firebase.js";
+      import {
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      await requireAuthRedirect();
 
       const profileName = document.getElementById("profileName");
       const profilePhoto = document.getElementById("profilePhoto");
       const logoutBtn = document.getElementById("logoutBtn");
 
-      // Guard & profile binding
       onAuthStateChangedHandler((user) => {
         if (user) {
-          profileName.textContent =
-            user.displayName || user.email || "Pengguna";
+          profileName.textContent = user.displayName || user.email;
           if (user.photoURL) profilePhoto.src = user.photoURL;
-        } else {
-          // window.location.href = "login.html";
-          profileName.textContent = ".....";
-          profilePhoto.src = "assets/images/faces/face15.jpg";
         }
       });
 
@@ -325,26 +302,50 @@
           icon: "question",
           showCancelButton: true,
           confirmButtonText: "Keluar",
-          cancelButtonText: "Batal",
         });
         if (ask.isConfirmed) await signOut();
       });
 
-      // ====== Placeholder pengisian kartu dashboard ======
-      // Silakan isi dengan query Firestore sesuai koleksi kamu.
-      // document.getElementById('cardTotalSiswa').textContent = totalSiswa;
-      // document.getElementById('cardTotalNilai').textContent = totalNilai;
-      // document.getElementById('cardTotalQR').textContent = totalQR;
-      // document.getElementById('cardPaketFavorit').textContent = namaPaket;
+      // === ambil data dari Firestore untuk isi kartu ===
+      async function loadDashboard() {
+        try {
+          const siswaSnap = await getDocs(collection(db, "siswa"));
+          const nilaiSnap = await getDocs(collection(db, "nilai"));
+          const qrSnap = await getDocs(collection(db, "qr"));
+
+          const totalSiswa = siswaSnap.size;
+          const totalNilai = nilaiSnap.size;
+          const totalQR = qrSnap.size;
+
+          document.getElementById("cardTotalSiswa").textContent = totalSiswa;
+          document.getElementById("cardTotalNilai").textContent = totalNilai;
+          document.getElementById("cardTotalQR").textContent = totalQR;
+
+          // hitung paket favorit
+          const paketCount = {};
+          siswaSnap.forEach((doc) => {
+            const data = doc.data();
+            const paket = data.pilihanPaket || "-";
+            paketCount[paket] = (paketCount[paket] || 0) + 1;
+          });
+
+          let favorit = "-";
+          let max = 0;
+          Object.entries(paketCount).forEach(([paket, count]) => {
+            if (count > max) {
+              max = count;
+              favorit = paket;
+            }
+          });
+
+          document.getElementById("cardPaketFavorit").textContent = favorit;
+        } catch (e) {
+          console.error(e);
+          Swal.fire("Gagal memuat data dashboard", e.message, "error");
+        }
+      }
+
+      loadDashboard();
     </script>
-
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Bootstrap & others -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/startbootstrap/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
   </body>
 </html>

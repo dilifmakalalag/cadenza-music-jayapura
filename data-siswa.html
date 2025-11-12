@@ -590,6 +590,7 @@
     <script type="module">
       /* 1) Import dari firebase.js: db + helper */
       import {
+        requireAuthRedirect,
         db,
         onStudentsSnapshot,
         getStudent,
@@ -612,7 +613,7 @@
         getDocs,
         writeBatch,
       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+      await requireAuthRedirect();
       /* ====== KONFIG NAMA KOLEKSI ====== */
       const STUDENTS_COL = "siswa";
       const NILAI_COL = "nilai";

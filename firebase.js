@@ -22,6 +22,8 @@ import {
   getAuth,
   onAuthStateChanged,
   signOut as fbSignOut,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 /* ========================
@@ -38,7 +40,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app); // <-- PENTING: ekspor db
+export const db = getFirestore(app);
 const auth = getAuth(app);
 
 /* ========================
@@ -228,8 +230,12 @@ export function onQrSnapshot(callback) {
 }
 
 /* ========================
-   11) Auth
+   11) Auth (login + helpers)
 ======================== */
+
+/**
+ * existing small helpers
+ */
 export function onAuthStateChangedHandler(callback) {
   return onAuthStateChanged(auth, callback);
 }
@@ -240,6 +246,56 @@ export async function signOut() {
     console.error("signOut error:", e);
     alert("Gagal logout.");
   }
+}
+
+/**
+ * Sign in with Google (popup)
+ */
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
+
+export async function signInWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    // result.user tersedia
+    return result;
+  } catch (e) {
+    console.error("signInWithGoogle error:", e);
+    throw e;
+  }
+}
+
+/**
+ * requireAuthRedirect:
+ * - jika user sudah login -> resolve(true)
+ * - jika belum -> redirect ke login.html?next=... dan resolve(false)
+ */
+export function requireAuthRedirect(loginUrl = "/login.html") {
+  return new Promise((resolve) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      unsub();
+      if (!user) {
+        const next = encodeURIComponent(location.pathname + location.search);
+        // gunakan absolute path jika perlu; biarkan loginUrl relatif
+        window.location.href = `${loginUrl}?next=${next}`;
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+}
+
+/**
+ * small helper: get current user once (Promise)
+ */
+export function getCurrentUserOnce() {
+  return new Promise((resolve) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      unsub();
+      resolve(user || null);
+    });
+  });
 }
 
 /* ========================
