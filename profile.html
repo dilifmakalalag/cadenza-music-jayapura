@@ -33,7 +33,6 @@
         --accent: #ffd369;
       }
 
-      /* Background + base */
       html,
       body {
         height: 100%;
@@ -46,7 +45,6 @@
         padding: 24px;
       }
 
-      /* Cards - glassmorphism */
       .card {
         background: var(--glass-bg);
         border: 1px solid var(--glass-bd);
@@ -61,7 +59,6 @@
         box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
       }
 
-      /* Section header */
       .section-title {
         font-weight: 700;
         margin-bottom: 0.5rem;
@@ -72,7 +69,6 @@
         padding-bottom: 0.25rem;
       }
 
-      /* Sub labels */
       .stat-label {
         color: var(--text-dim);
         font-size: 0.85rem;
@@ -97,7 +93,6 @@
         text-overflow: ellipsis;
       }
 
-      /* Inputs to match dark look */
       .form-control,
       .form-select,
       .form-control:focus,
@@ -115,7 +110,6 @@
         box-shadow: 0 0 0 0.2rem rgba(255, 211, 105, 0.25);
       }
 
-      /* Buttons */
       .btn {
         border-radius: 12px;
         transition: all 0.25s ease;
@@ -128,7 +122,6 @@
         opacity: 0.95;
       }
 
-      /* User chip (top right) */
       .user-chip {
         display: inline-flex;
         align-items: center;
@@ -146,7 +139,6 @@
         box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
       }
 
-      /* QR image */
       .qr-img {
         width: 150px;
         height: 150px;
@@ -157,13 +149,11 @@
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
       }
 
-      /* Table */
       .table {
         color: #fff;
         margin-bottom: 0;
       }
       #nilaiTable thead {
-        /* background: linear-gradient(135deg, #6e8efb, #a777e3); */
         color: #fff;
         border: none;
       }
@@ -178,7 +168,6 @@
         vertical-align: middle;
       }
 
-      /* Print */
       @media print {
         .no-print {
           display: none !important;
@@ -202,7 +191,7 @@
     <div class="container-scroller">
       <div class="container-fluid">
         <div class="content-wrapper">
-          <!-- Top bar actions -->
+          <!-- Tombol atas -->
           <div
             class="d-flex flex-wrap align-items-center justify-content-between gap-2 no-print"
           >
@@ -226,7 +215,7 @@
           <!-- Profil + QR -->
           <div class="row mt-3">
             <!-- QR -->
-            <div class="col-lg-4">
+            <div class="col-lg-4 mb-3">
               <div class="card h-100">
                 <div
                   class="card-body text-center d-flex flex-column justify-content-center align-items-center"
@@ -243,52 +232,46 @@
                 </div>
               </div>
             </div>
+
+            <!-- Informasi siswa -->
             <div class="col-lg-8">
               <div class="card">
                 <div class="card-body">
                   <div class="section-title">Informasi Siswa</div>
                   <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-3">
                       <div class="stat-label">Nama Siswa</div>
                       <div id="fNama" class="h5 mb-0">-</div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 mb-3">
                       <div class="stat-label">Jenis Kelamin</div>
                       <div id="fJK">-</div>
                     </div>
-                    <div class="col-md-3">
-                      <div class="stat-label">Kelas</div>
-                      <div id="fKelas">-</div>
-                    </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-3">
                       <div class="stat-label">Tempat & Tanggal Lahir</div>
                       <div id="fTTL" class="truncate">-</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-3">
                       <div class="stat-label">Alamat</div>
                       <div id="fAlamat" class="truncate">-</div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-3">
                       <div class="stat-label">Kontak Siswa</div>
                       <div id="fTelp">-</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-3">
                       <div class="stat-label">Ortu/Wali</div>
                       <div id="fOrtu">-</div>
                       <div id="fTelpOrtu" class="text-muted small"></div>
                     </div>
 
-                    <div class="col-12">
+                    <div class="col-12 mb-3 mb-3">
                       <div class="stat-label">Instrumen</div>
                       <div id="fInstrumen">-</div>
                     </div>
-                    <div class="col-12">
-                      <div class="stat-label">Genre</div>
-                      <div id="fGenre">-</div>
-                    </div>
-                    <div class="col-12">
+                    <div class="col-12 mb-3">
                       <div class="stat-label">Paket</div>
                       <div id="fPaket">-</div>
                     </div>
@@ -365,199 +348,127 @@
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- App -->
+    <!-- Firebase Logic -->
     <script type="module">
-      import {
-        onAuthStateChangedHandler,
-        signOut,
-        getStudent,
-        onNilaiSnapshot,
-      } from "./firebase.js";
+      import { getStudent, onNilaiSnapshot } from "./firebase.js";
 
-      // ===== Auth guard + profile header =====
-      const profileName = document.getElementById("profileName");
-      const profilePhoto = document.getElementById("profilePhoto");
-      const logoutBtn = document.getElementById("logoutBtn");
+      const params = new URLSearchParams(location.search);
+      const id = params.get("id");
+      const profileUrl = window.location.href;
 
-      onAuthStateChangedHandler((user) => {
-        if (user) {
-          profileName.textContent =
-            user.displayName || user.email || "Pengguna";
-          if (user.photoURL) profilePhoto.src = user.photoURL;
-        } else {
-          profileName.textContent = "Pengguna";
-          profilePhoto.src = "assets/images/faces/face15.jpg";
-        }
-      });
-
-      logoutBtn?.addEventListener("click", async (e) => {
-        e.preventDefault();
-        const q = await Swal.fire({
-          title: "Log out?",
-          icon: "question",
-          showCancelButton: true,
-          confirmButtonText: "Ya",
-          cancelButtonText: "Batal",
+      if (id) {
+        // ambil data siswa
+        getStudent(id).then((s) => {
+          if (!s) return;
+          document.getElementById("fNama").textContent = s.namaSiswa || "-";
+          document.getElementById("fJK").textContent = s.jenisKelamin || "-";
+          document.getElementById("fTTL").textContent =
+            (s.tempatLahir || "-") + ", " + (s.tanggalLahir || "-");
+          document.getElementById("fAlamat").textContent = s.alamat || "-";
+          document.getElementById("fTelp").textContent = s.noTelepon || "-";
+          document.getElementById("fOrtu").textContent = s.namaOrtu || "-";
+          document.getElementById("fTelpOrtu").textContent =
+            s.noTeleponOrtu || "";
+          // pilihanIstrumen di database mungkin array
+          document.getElementById("fInstrumen").textContent = Array.isArray(
+            s.pilihanIstrumen
+          )
+            ? s.pilihanIstrumen.join(", ")
+            : s.pilihanIstrumen || "-";
+          document.getElementById("fPaket").textContent = s.pilihanPaket || "-";
+          document.getElementById("profileUrlA").href = profileUrl;
+          document.getElementById("profileUrlA").textContent = profileUrl;
         });
-        if (q.isConfirmed) await signOut();
-      });
 
-      // ===== Helpers =====
-      function qs(name) {
-        const url = new URL(location.href);
-        return url.searchParams.get(name);
-      }
-      function arr(x) {
-        return Array.isArray(x) ? x : x ? [x] : [];
-      }
-      function chips(el, items) {
-        el.innerHTML = items.length
-          ? items.map((v) => `<span class="chip">${v}</span>`).join(" ")
-          : "-";
-      }
-      function buildProfileUrl(id) {
-        const base = `${location.origin}${location.pathname.replace(
-          /[^/]+$/,
-          ""
-        )}`;
-        return `${base}profile.html?id=${encodeURIComponent(id)}`;
-      }
-      function buildQrUrl(dataUrl) {
-        const encoded = encodeURIComponent(dataUrl);
-        return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encoded}`;
-      }
-      function toTTL(tempat, tanggal) {
-        if (!tempat && !tanggal) return "-";
-        if (tempat && tanggal) return `${tempat}, ${tanggal}`;
-        return tempat || tanggal || "-";
-      }
-      function materiHtml(m) {
-        const a = arr(m);
-        return a.length
-          ? a.map((v) => `<span class="chip">${v}</span>`).join(" ")
-          : "-";
-      }
-      function tautanHtml(t) {
-        const a = arr(t);
-        return a.length
-          ? a
-              .map(
-                (v) =>
-                  `<a href="${v}" target="_blank" rel="noopener" class="text-decoration-underline">${v}</a>`
-              )
-              .join("<br/>")
-          : "-";
-      }
+        // realtime nilai
+        onNilaiSnapshot((list) => {
+          const tbody = document.querySelector("#nilaiTable tbody");
+          // filter berdasarkan siswaId (harus sesuai field di koleksi 'nilai')
+          const data = list.filter((n) => n.siswaId === id);
 
-      // ===== Elements =====
-      const fNama = document.getElementById("fNama");
-      const fJK = document.getElementById("fJK");
-      const fKelas = document.getElementById("fKelas");
-      const fTTL = document.getElementById("fTTL");
-      const fAlamat = document.getElementById("fAlamat");
-      const fTelp = document.getElementById("fTelp");
-      const fOrtu = document.getElementById("fOrtu");
-      const fTelpOrtu = document.getElementById("fTelpOrtu");
-      const fInstrumen = document.getElementById("fInstrumen");
-      const fGenre = document.getElementById("fGenre");
-      const fPaket = document.getElementById("fPaket");
-
-      const qrImg = document.getElementById("qrImg");
-      const profileUrlA = document.getElementById("profileUrlA");
-      const btnCopyUrl = document.getElementById("btnCopyUrl");
-      const btnDownloadQR = document.getElementById("btnDownloadQR");
-      const btnPrint = document.getElementById("btnPrint");
-
-      const nilaiTbody = document.querySelector("#nilaiTable tbody");
-      const countNilai = document.getElementById("countNilai");
-
-      // ===== Main =====
-      const siswaId = qs("id");
-      if (!siswaId) {
-        Swal.fire(
-          "Profil tidak valid",
-          "Parameter ?id tidak ditemukan.",
-          "error"
-        );
-      } else {
-        // Profil siswa
-        const s = await getStudent(siswaId);
-        if (!s) {
-          Swal.fire("Tidak ditemukan", "Siswa tidak ditemukan.", "warning");
-        } else {
-          document.title = `CADENZA — ${s.namaSiswa || "Profil Siswa"}`;
-          fNama.textContent = s.namaSiswa || "-";
-          fJK.textContent = s.jenisKelamin || "-";
-          fKelas.textContent = s.kelas || "-";
-          fTTL.textContent = toTTL(s.tempatLahir, s.tanggalLahir);
-          fAlamat.textContent = s.alamat || "-";
-          fTelp.textContent = s.noTelepon || "-";
-          fOrtu.textContent = s.namaOrtu || "-";
-          fTelpOrtu.textContent = s.noTeleponOrtu || "";
-          chips(fInstrumen, arr(s.pilihanIstrumen));
-          chips(fGenre, arr(s.pilihanGenre));
-          chips(fPaket, arr(s.pilihanPaket));
-
-          // QR & URL profil
-          const pUrl = buildProfileUrl(siswaId);
-          const qUrl = buildQrUrl(pUrl);
-          profileUrlA.href = pUrl;
-          profileUrlA.textContent = pUrl;
-          qrImg.src = qUrl;
-          btnDownloadQR.href = qUrl;
-
-          btnCopyUrl.addEventListener("click", async () => {
-            try {
-              await navigator.clipboard.writeText(pUrl);
-              Swal.fire(
-                "Tersalin",
-                "URL profil disalin ke clipboard.",
-                "success"
-              );
-            } catch {
-              Swal.fire("Gagal", "Tidak dapat menyalin URL.", "error");
-            }
+          // optional: urutkan by tanggal jika field tanggal tersedia dalam format YYYY-MM-DD
+          data.sort((a, b) => {
+            const ta = a.tanggal ? new Date(a.tanggal) : new Date(0);
+            const tb = b.tanggal ? new Date(b.tanggal) : new Date(0);
+            return tb - ta; // terbaru dulu
           });
-          btnPrint.addEventListener("click", () => window.print());
 
-          // Nilai siswa (ambil dari snapshot dan filter client-side)
-          onNilaiSnapshot((rows) => {
-            const mine = rows
-              .filter((r) => r.siswaId === siswaId)
-              .sort(
-                (a, b) =>
-                  (Date.parse(b.tanggal || "") || 0) -
-                  (Date.parse(a.tanggal || "") || 0)
-              );
+          document.getElementById(
+            "countNilai"
+          ).textContent = `${data.length} nilai`;
 
-            countNilai.textContent = `${mine.length} catatan`;
-            nilaiTbody.innerHTML = "";
+          tbody.innerHTML = data
+            .map((d, i) => {
+              // materi bisa berupa array atau string
+              const materiHTML = Array.isArray(d.materi)
+                ? d.materi.map((m) => (m || "").toString().trim()).join("<br>")
+                : String(d.materi || "").replace(/\n/g, "<br>");
 
-            mine.forEach((r, i) => {
-              const tr = document.createElement("tr");
-              tr.innerHTML = `
-                <td>${i + 1}</td>
-                <td>${r.tanggal || "-"}</td>
-                <td>${r.instrumen || "-"}</td>
-                <td>${r.instruktur || "-"}</td>
-                <td>${
-                  typeof r.predikat === "number"
-                    ? r.predikat
-                    : r.predikat || "-"
-                }</td>
-                <td>${materiHtml(r.materi)}</td>
-                <td class="truncate">${tautanHtml(r.tautan)}</td>
+              // tautan bisa array atau multiline string
+              const tautanHTML = Array.isArray(d.tautan)
+                ? d.tautan
+                    .map(
+                      (t) =>
+                        `<a href="${t}" target="_blank" class="text-info">${t}</a>`
+                    )
+                    .join("<br>")
+                : String(d.tautan || "")
+                    .split("\n")
+                    .filter((t) => t.trim())
+                    .map(
+                      (t) =>
+                        `<a href="${t}" target="_blank" class="text-info">${t}</a>`
+                    )
+                    .join("<br>");
+
+              return `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td>${d.tanggal || "-"}</td>
+                  <td>${d.instrumen || "-"}</td>
+                  <td>${d.instruktur || "-"}</td>
+                  <td>${d.predikat || "-"}</td>
+                  <td>${materiHTML}</td>
+                  <td>${tautanHTML}</td>
+                </tr>
               `;
-              nilaiTbody.appendChild(tr);
-            });
-          });
-        }
+            })
+            .join("");
+        });
+      } else {
+        // tidak ada id di query string
+        document.querySelector("#nilaiTable tbody").innerHTML =
+          '<tr><td colspan="7" class="text-center text-muted">Buka halaman ini dengan parameter <code>?id=ID_SISWA</code></td></tr>';
+      }
+
+      // tombol print & salin URL
+      document
+        .getElementById("btnPrint")
+        ?.addEventListener("click", () => window.print());
+      document
+        .getElementById("btnCopyUrl")
+        ?.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(profileUrl);
+            Swal.fire(
+              "Disalin!",
+              "URL profil telah disalin ke clipboard.",
+              "success"
+            );
+          } catch (e) {
+            Swal.fire("Gagal", "Tidak dapat menyalin URL.", "error");
+          }
+        });
+
+      // tombol unduh QR: jika kamu ingin membuat QR dari profileUrl,
+      // set attribute href ke endpoint pembuat QR (mis: api.qrserver.com)
+      const btnDownloadQR = document.getElementById("btnDownloadQR");
+      if (btnDownloadQR) {
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
+          profileUrl
+        )}`;
+        btnDownloadQR.href = qrUrl;
       }
     </script>
-
-    <!-- Optional libs -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/startbootstrap/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
   </body>
 </html>
