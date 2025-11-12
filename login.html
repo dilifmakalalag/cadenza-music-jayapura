@@ -83,14 +83,17 @@
     </div>
 
     <script type="module">
-      import { signInWithGoogle, getCurrentUserOnce } from "./firebase.js";
+      import {
+        signInWithGoogle,
+        // getCurrentUserOnce
+      } from "./firebase.js";
 
       const btn = document.getElementById("btnGoogle");
       const status = document.getElementById("status");
 
       // jika sudah login, redirect ke next
       (async () => {
-        const user = await getCurrentUserOnce();
+        // const user = await getCurrentUserOnce();
         const params = new URLSearchParams(location.search);
         const next = params.get("next") || "/public_html/index.html";
         if (user) {
