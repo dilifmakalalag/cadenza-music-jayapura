@@ -311,4 +311,6 @@ export {
   where,
   getDocs,
   writeBatch,
+  signInWithGoogle,
+  getCurrentUserOnce,
 };

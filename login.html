@@ -83,7 +83,7 @@
     </div>
 
     <script type="module">
-      import { signInWithGoogle, getCurrentUserOnce } from "./firebase.js";
+      import { signInWithGoogle, getCurrentUserOnce } from "./firebase.js?v=2";
 
       const btn = document.getElementById("btnGoogle");
       const status = document.getElementById("status");
@@ -92,7 +92,7 @@
       (async () => {
         // const user = await getCurrentUserOnce();
         const params = new URLSearchParams(location.search);
-        const next = params.get("next") || "/public_html/index.html";
+        const next = params.get("next") || "/index.html";
         if (user) {
           status.textContent = `Sudah masuk sebagai ${
             user.displayName || user.email
@@ -109,7 +109,7 @@
           const res = await signInWithGoogle();
           const user = res.user;
           const params = new URLSearchParams(location.search);
-          const next = params.get("next") || "/public_html/index.html";
+          const next = params.get("next") || "/index.html";
 
           // success feedback
           await Swal.fire({
