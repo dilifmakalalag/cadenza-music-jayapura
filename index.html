@@ -412,6 +412,277 @@
 
       loadDashboard();
     </script>
+    <script>
+      /*
+  Fix untuk index cadenza:
+  - safe-get profile elements (fallback ke selectors yang ada di template)
+  - safe logout wiring
+  - sidebar toggler (minimize / offcanvas) tanpa ubah HTML
+*/
+      (function () {
+        // --- safe element helpers ---
+        const byId = (id) => document.getElementById(id);
+        const safeQueryAll = (sel) =>
+          Array.from(document.querySelectorAll(sel || "") || []);
+
+        // profile elements: prefer id, fallback ke class selectors used in template
+        const profileNameEl =
+          byId("profileName") ||
+          document.querySelector(".navbar-profile-name") ||
+          document.querySelector(".profile-name h5") ||
+          null;
+
+        const profilePhotoEl =
+          byId("profilePhoto") ||
+          document.querySelector(".navbar-profile img") ||
+          document.querySelector(".profile-pic img") ||
+          null;
+
+        // safe setter functions
+        function safeSetText(el, value) {
+          if (!el) return;
+          try {
+            el.textContent = value;
+          } catch (err) {
+            // ignore
+            console.warn("safeSetText failed:", err);
+          }
+        }
+        function safeSetImgSrc(el, src) {
+          if (!el) return;
+          try {
+            el.src = src;
+          } catch (err) {
+            console.warn("safeSetImgSrc failed:", err);
+          }
+        }
+
+        // wire logout safely
+        const logoutBtn =
+          byId("logoutBtn") || document.querySelector("#logoutBtn") || null;
+        if (logoutBtn) {
+          // If firebase signOut is available globally (or via module import earlier),
+          // the existing code will handle it; here we attach a safe fallback that only
+          // prevents errors if signOut isn't available yet.
+          logoutBtn.addEventListener("click", async function (e) {
+            e.preventDefault();
+            try {
+              // if signOut function exists (from /firebase.js module), call it
+              if (typeof window.signOut === "function") {
+                await window.signOut();
+              } else if (typeof signOut === "function") {
+                // in case signOut is in scope
+                await signOut();
+              } else {
+                // no signOut function available: just redirect to login after confirmation
+                if (confirm("Log out? (no auth module detected)")) {
+                  window.location.href = "login.html";
+                }
+                return;
+              }
+              // after successful signout redirect (if not handled elsewhere)
+              window.location.href = "login.html";
+            } catch (err) {
+              console.error("Logout error (safe handler):", err);
+              alert(
+                "Gagal logout: " + (err && err.message ? err.message : err)
+              );
+            }
+          });
+        }
+
+        // auth state handler: try to use any available onAuthStateChangedHandler (module) else ignore
+        function safeWireAuthHandler() {
+          try {
+            if (typeof onAuthStateChangedHandler === "function") {
+              onAuthStateChangedHandler((user) => {
+                if (!user) {
+                  // if KWITANSI style redirect desired, we keep it:
+                  if (location.pathname.indexOf("login.html") === -1) {
+                    window.location.href = "login.html";
+                  }
+                  return;
+                }
+                const name = user.displayName || user.email || "User";
+                safeSetText(profileNameEl, name);
+                if (user.photoURL) {
+                  safeSetImgSrc(profilePhotoEl, user.photoURL);
+                } else {
+                  // if profilePhotoEl exists, ensure it has default src
+                  if (profilePhotoEl && !profilePhotoEl.src) {
+                    profilePhotoEl.src = "assets/images/faces/face15.jpg";
+                  }
+                }
+                // also update any other profile placeholders
+                safeQueryAll(".navbar-profile-name, .profile-name h5").forEach(
+                  (el) => safeSetText(el, name)
+                );
+                safeQueryAll(".navbar-profile img, .profile-pic img").forEach(
+                  (img) => {
+                    if (user.photoURL) img.src = user.photoURL;
+                    else img.src = "assets/images/faces/face15.jpg";
+                  }
+                );
+              });
+            } else {
+              // onAuthStateChangedHandler not present yet - do nothing (other script may wire)
+            }
+          } catch (err) {
+            console.warn("safeWireAuthHandler error:", err);
+          }
+        }
+
+        // try immediate wiring; if not available now, also try after DOMContentLoaded
+        safeWireAuthHandler();
+
+        // --- Sidebar toggler (works without changing HTML) ---
+        // Behavior:
+        // - data-toggle="minimize" => toggle body class 'sidebar-collapsed' on large screens
+        // - data-toggle="offcanvas" => toggle body class 'sidebar-open' for mobile overlay
+        (function initSidebarToggle() {
+          const BODY_COLLAPSE_CLASS = "sidebar-collapsed";
+          const BODY_OFFCANVAS_CLASS = "sidebar-open";
+          const sidebar =
+            document.getElementById("sidebar") ||
+            document.querySelector(".sidebar");
+          if (!sidebar) return;
+
+          // small CSS patch injection (non intrusive) to make collapse/offcanvas visible if needed
+          if (!document.getElementById("cadenza-sidebar-toggle-style")) {
+            const css = document.createElement("style");
+            css.id = "cadenza-sidebar-toggle-style";
+            css.innerHTML = `
+        /* minimal styles for toggling without changing original markup */
+        body.${BODY_COLLAPSE_CLASS} .sidebar { transform: translateX(-260px); transition: transform .22s ease; }
+        @media (max-width: 991px) {
+          .sidebar { transform: translateX(-260px); }
+          body.${BODY_OFFCANVAS_CLASS} .sidebar { position: fixed; left:0; top:0; height:100vh; transform: translateX(0); z-index:1050; box-shadow:0 8px 20px rgba(0,0,0,.35); background:inherit; }
+          .cadenza-overlay { position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:1040; }
+        }
+      `;
+            document.head.appendChild(css);
+          }
+
+          // overlay management
+          let overlay = null;
+          function ensureOverlay() {
+            if (!overlay) {
+              overlay = document.createElement("div");
+              overlay.className = "cadenza-overlay";
+              overlay.addEventListener("click", () => {
+                document.body.classList.remove(BODY_OFFCANVAS_CLASS);
+                removeOverlay();
+              });
+            }
+            return overlay;
+          }
+          function removeOverlay() {
+            if (overlay && overlay.parentNode)
+              overlay.parentNode.removeChild(overlay);
+          }
+
+          // toggle handlers
+          function toggleCollapse() {
+            // if mobile, open offcanvas instead
+            if (
+              window.matchMedia &&
+              window.matchMedia("(max-width:991px)").matches
+            ) {
+              toggleOffcanvas();
+              return;
+            }
+            document.body.classList.toggle(BODY_COLLAPSE_CLASS);
+          }
+          function toggleOffcanvas() {
+            if (document.body.classList.contains(BODY_OFFCANVAS_CLASS)) {
+              document.body.classList.remove(BODY_OFFCANVAS_CLASS);
+              removeOverlay();
+              document.documentElement.style.overflow = "";
+            } else {
+              document.body.classList.add(BODY_OFFCANVAS_CLASS);
+              document.body.appendChild(ensureOverlay());
+              document.documentElement.style.overflow = "hidden";
+            }
+          }
+
+          // attach buttons
+          const minimizeBtns = Array.from(
+            document.querySelectorAll('[data-toggle="minimize"]')
+          );
+          const offcanvasBtns = Array.from(
+            document.querySelectorAll('[data-toggle="offcanvas"]')
+          );
+
+          minimizeBtns.forEach((btn) =>
+            btn.addEventListener("click", (e) => {
+              e.preventDefault();
+              toggleCollapse();
+            })
+          );
+          offcanvasBtns.forEach((btn) =>
+            btn.addEventListener("click", (e) => {
+              e.preventDefault();
+              toggleOffcanvas();
+            })
+          );
+
+          // close offcanvas when resizing to desktop
+          window.addEventListener("resize", () => {
+            if (
+              window.matchMedia &&
+              !window.matchMedia("(max-width:991px)").matches
+            ) {
+              if (document.body.classList.contains(BODY_OFFCANVAS_CLASS)) {
+                document.body.classList.remove(BODY_OFFCANVAS_CLASS);
+                removeOverlay();
+                document.documentElement.style.overflow = "";
+              }
+            }
+          });
+
+          // click outside sidebar closes offcanvas
+          document.addEventListener("click", (ev) => {
+            if (!document.body.classList.contains(BODY_OFFCANVAS_CLASS)) return;
+            if (sidebar.contains(ev.target)) return;
+            if (ev.target.closest('[data-toggle="offcanvas"]')) return;
+            document.body.classList.remove(BODY_OFFCANVAS_CLASS);
+            removeOverlay();
+            document.documentElement.style.overflow = "";
+          });
+
+          // ESC to close
+          document.addEventListener("keydown", (ev) => {
+            if (
+              ev.key === "Escape" &&
+              document.body.classList.contains(BODY_OFFCANVAS_CLASS)
+            ) {
+              document.body.classList.remove(BODY_OFFCANVAS_CLASS);
+              removeOverlay();
+              document.documentElement.style.overflow = "";
+            }
+          });
+        })();
+
+        // run safe auth wiring after DOM ready in case auth module loaded later
+        document.addEventListener("DOMContentLoaded", function () {
+          // if modular /firebase.js exports auth functions to window namespace, try wiring after DOM ready
+          safeWireAuthHandler();
+
+          // also ensure profile placeholders filled if some user data object available globally
+          try {
+            if (window.currentUser && typeof window.currentUser === "object") {
+              const u = window.currentUser;
+              const name = u.displayName || u.email || "User";
+              safeSetText(profileNameEl, name);
+              if (u.photoURL) safeSetImgSrc(profilePhotoEl, u.photoURL);
+            }
+          } catch (err) {
+            // ignore
+          }
+        });
+      })();
+    </script>
+
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
