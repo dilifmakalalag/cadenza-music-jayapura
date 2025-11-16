@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KWITANSI-TELUR — Dashboard</title>
+    <title>CADENZA — Dashboard</title>
 
     <!-- Vendor CSS -->
     <link
@@ -11,12 +11,26 @@
       href="assets/vendors/mdi/css/materialdesignicons.min.css"
     />
     <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css" />
-    <!-- Your project CSS -->
+    <link
+      rel="stylesheet"
+      href="assets/vendors/jvectormap/jquery-jvectormap.css"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/vendors/flag-icon-css/css/flag-icon.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/vendors/owl-carousel-2/owl.carousel.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/vendors/owl-carousel-2/owl.theme.default.min.css"
+    />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="shortcut icon" href="assets/images/favicon.png" />
 
     <style>
-      /* small tweaks for cards so numbers align nicely */
       .card .stat-value {
         font-size: 1.5rem;
         font-weight: 700;
@@ -25,259 +39,278 @@
         font-size: 0.9rem;
         color: #6c757d;
       }
-
-      /* minimal responsive helper if original css missing certain rules */
-      @media (max-width: 991px) {
-        .sidebar {
-          transform: translateX(-260px);
-          transition: transform 0.22s ease;
-        }
-        body.sidebar-open .sidebar {
-          transform: translateX(0) !important;
-          position: fixed;
-          z-index: 1050;
-          height: 100vh;
-          left: 0;
-          top: 0;
-          background: inherit;
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-        }
-        .overlay-mobile {
-          position: fixed;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.35);
-          z-index: 1040;
-        }
-      }
     </style>
   </head>
 
-  <body>
+  <body class="bg-light">
     <div class="container-scroller">
-      <!-- SIDEBAR -->
-      <nav id="sidebar" class="sidebar sidebar-offcanvas" role="navigation">
+      <!-- Sidebar -->
+
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div
           class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top"
         >
-          <a class="sidebar-brand brand-logo" href="index.html"
-            ><img src="assets/images/logo.svg" alt="logo"
+          <a class="sidebar-brand brand-logo text-white" href="index.html"
+            >CADENZA</a
+          >
+          <a class="sidebar-brand brand-logo-mini" href="index.html"
+            ><img src="assets/images/logo-mini.svg" alt="logo"
           /></a>
         </div>
         <ul class="nav">
-          <li class="nav-item nav-profile">
-            <div class="nav-link d-flex">
-              <div class="profile-image">
-                <!-- profilePhoto id ditambahkan supaya modul auth bisa set src -->
-                <img
-                  id="profilePhoto"
-                  src="assets/images/faces/face15.jpg"
-                  alt="profile"
-                />
-              </div>
-              <div class="profile-name ms-2">
-                <!-- profileName id ditambahkan supaya modul auth bisa set textContent -->
-                <p id="profileName" class="mb-0">User</p>
-                <small class="text-muted">Administrator</small>
-              </div>
-            </div>
+          <li class="nav-item nav-category">
+            <span class="nav-link">Menu</span>
           </li>
-
-          <!-- contoh menu -->
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">
-              <span class="mdi mdi-view-dashboard menu-icon"></span>
-              <span class="menu-title">Dashboard</span>
+          <li class="nav-item menu-items">
+            <a class="nav-link active" href="index.html">
+              <span class="menu-icon"><i class="mdi mdi-speedometer"></i></span>
+              <span class="menu-title">Beranda</span>
             </a>
           </li>
-
-          <li class="nav-item">
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-siswa.html">
+              <span class="menu-icon"
+                ><i class="mdi mdi-account-group"></i
+              ></span>
+              <span class="menu-title">Data Siswa</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
             <a class="nav-link" href="data-nilai.html">
-              <span class="mdi mdi-school menu-icon"></span>
+              <span class="menu-icon"
+                ><i class="mdi mdi-clipboard-text"></i
+              ></span>
               <span class="menu-title">Data Nilai</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="data-qr.html">
+              <span class="menu-icon"><i class="mdi mdi-qrcode"></i></span>
+              <span class="menu-title">Data QR</span>
             </a>
           </li>
         </ul>
       </nav>
 
-      <!-- PAGE BODY WRAPPER -->
-      <div class="page-body-wrapper">
-        <!-- NAVBAR -->
-        <header class="navbar">
-          <div class="navbar-menu-wrapper d-flex align-items-stretch">
-            <!-- toggle (minimize desktop) -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div
+            class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center"
+          >
+            <a class="navbar-brand brand-logo-mini" href="index.html"
+              ><img src="assets/images/logo-mini.svg" alt="logo"
+            /></a>
+          </div>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
             <button
-              class="navbar-toggler align-self-center"
+              class="navbar-toggler navbar-toggler align-self-center"
               type="button"
               data-toggle="minimize"
             >
               <span class="mdi mdi-menu"></span>
             </button>
-
-            <ul class="navbar-nav navbar-nav-right ms-auto">
-              <li class="nav-item dropdown d-none d-lg-flex">
+            <ul class="navbar-nav w-100"></ul>
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item dropdown">
                 <a
                   class="nav-link"
                   id="profileDropdown"
-                  data-bs-toggle="dropdown"
                   href="#"
-                  aria-expanded="false"
+                  data-toggle="dropdown"
                 >
-                  <div class="d-flex align-items-center">
+                  <div class="navbar-profile">
                     <img
-                      id="profilePhotoSmall"
+                      class="img-xs rounded-circle"
                       src="assets/images/faces/face15.jpg"
-                      alt="profile"
-                      class="rounded-circle"
-                      width="32"
+                      alt=""
                     />
-                    <span
-                      id="profileNameSmall"
-                      class="ms-2 d-none d-md-inline-block"
-                      >User</span
-                    >
+                    <p class="mb-0 d-none d-sm-block navbar-profile-name">
+                      .....
+                    </p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
                   </div>
                 </a>
                 <div
-                  class="dropdown-menu dropdown-menu-end navbar-dropdown"
+                  class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
                   aria-labelledby="profileDropdown"
                 >
-                  <a class="dropdown-item" href="#" id="btnProfile">Profil</a>
                   <div class="dropdown-divider"></div>
-                  <!-- tombol logout bereferensi id logoutBtn agar modular JS bisa attach -->
-                  <a class="dropdown-item" href="#" id="logoutBtn">Logout</a>
+                  <a id="logoutBtn" class="dropdown-item preview-item" href="#">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-logout text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Log out</p>
+                    </div>
+                  </a>
                 </div>
-              </li>
-
-              <!-- offcanvas toggle mobile -->
-              <li class="nav-item d-lg-none">
-                <button
-                  class="navbar-toggler"
-                  type="button"
-                  data-toggle="offcanvas"
-                >
-                  <span class="mdi mdi-menu"></span>
-                </button>
               </li>
             </ul>
+            <button
+              class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
+              type="button"
+              data-toggle="offcanvas"
+            >
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
           </div>
-        </header>
+        </nav>
+        <!-- <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div
+            class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center"
+          >
+            <a class="navbar-brand brand-logo-mini" href="index.html"
+              ><img src="assets/images/logo-mini.svg" alt="logo"
+            /></a>
+          </div>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+            <button
+              class="navbar-toggler navbar-toggler align-self-center"
+              type="button"
+              data-toggle="minimize"
+            >
+              <span class="mdi mdi-menu"></span>
+            </button>
+            <ul class="navbar-nav w-100"></ul>
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link"
+                  id="profileDropdown"
+                  href="#"
+                  data-toggle="dropdown"
+                >
+                  <div class="navbar-profile d-flex align-items-center">
+                    <img
+                      id="profilePhoto"
+                      class="img-xs rounded-circle me-2"
+                      src="assets/images/faces/face15.jpg"
+                      alt=""
+                    />
+                    <p
+                      id="profileName"
+                      class="mb-0 d-none d-sm-block navbar-profile-name"
+                    >
+                      .....
+                    </p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                  </div>
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                  aria-labelledby="profileDropdown"
+                >
+                  <div class="dropdown-divider"></div>
+                  <a id="logoutBtn" class="dropdown-item preview-item" href="#">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-logout text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Log out</p>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+            <button
+              class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
+              type="button"
+              data-toggle="offcanvas"
+            >
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
+          </div>
+        </nav> -->
 
-        <!-- MAIN CONTENT -->
+        <!-- main-panel -->
         <div class="main-panel">
           <div class="content-wrapper">
+            <h5 class="mb-3">Beranda</h5>
+
             <div class="row">
-              <div class="col-md-4 grid-margin stretch-card">
+              <!-- Total Siswa -->
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <div class="d-flex align-items-center">
-                      <div class="flex-grow">
-                        <h6 class="card-title">Transaksi Hari ini</h6>
-                        <div class="d-flex align-items-center align-self-start">
-                          <h3 id="cardDayTx" class="mb-0 stat-value">0</h3>
-                          <p
-                            id="cardPctTxToday"
-                            class="text-success ml-2 mb-0 font-weight-medium stat-sub"
-                          ></p>
-                        </div>
+                    <div class="row">
+                      <div class="col-9">
+                        <h3 id="cardTotalSiswa" class="mb-0 stat-value">0</h3>
                       </div>
                       <div class="col-3">
                         <div class="icon icon-box-success">
-                          <span class="mdi mdi-cart-outline icon-item"></span>
+                          <span class="mdi mdi-account-group icon-item"></span>
                         </div>
                       </div>
                     </div>
-                    <h6 class="text-muted font-weight-normal">
-                      Jumlah Transaksi Hari ini
-                    </h6>
+                    <h6 class="text-muted font-weight-normal">Total Siswa</h6>
                   </div>
                 </div>
               </div>
 
-              <div class="col-md-4 grid-margin stretch-card">
+              <!-- Total Nilai -->
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h6 class="card-title">Transaksi Bulan Ini</h6>
-                    <div class="d-flex align-items-center">
-                      <div class="flex-grow">
-                        <div class="d-flex align-items-center align-self-start">
-                          <h3 id="cardMonthTx" class="mb-0 stat-value">0</h3>
-                          <p
-                            id="cardPctTxMonth"
-                            class="text-success ml-2 mb-0 font-weight-medium stat-sub"
-                          ></p>
-                        </div>
+                    <div class="row">
+                      <div class="col-9">
+                        <h3 id="cardTotalNilai" class="mb-0 stat-value">0</h3>
                       </div>
                       <div class="col-3">
                         <div class="icon icon-box-success">
-                          <span class="mdi mdi-cart-plus icon-item"></span>
+                          <span class="mdi mdi-clipboard-text icon-item"></span>
                         </div>
                       </div>
                     </div>
                     <h6 class="text-muted font-weight-normal">
-                      Jumlah Transaksi Bulan ini
+                      Total Nilai Terekam
                     </h6>
                   </div>
                 </div>
               </div>
 
-              <div class="col-md-4 grid-margin stretch-card">
+              <!-- Total QR -->
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h6 class="card-title">Total Pendapatan</h6>
-                    <div class="d-flex align-items-center">
-                      <div class="flex-grow">
-                        <div class="d-flex align-items-center align-self-start">
-                          <h3 id="cardRevenue" class="mb-0 stat-value">0</h3>
-                          <p
-                            id="cardPctRevenue"
-                            class="text-success ml-2 mb-0 font-weight-medium stat-sub"
-                          ></p>
-                        </div>
+                    <div class="row">
+                      <div class="col-9">
+                        <h3 id="cardTotalQR" class="mb-0 stat-value">0</h3>
                       </div>
                       <div class="col-3">
-                        <div class="icon icon-box-info">
-                          <span class="mdi mdi-cash icon-item"></span>
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-qrcode icon-item"></span>
                         </div>
                       </div>
                     </div>
                     <h6 class="text-muted font-weight-normal">
-                      Pendapatan Total
+                      Total QR Terbit
                     </h6>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- tabel/data cards dll tetap dipertahankan sesuai id existing -->
-            <div class="row">
-              <div class="col-12">
+              <!-- Paket Favorit -->
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Daftar Penjualan</h4>
-                    <div class="table-responsive">
-                      <table id="tblPenjualan" class="table">
-                        <thead>
-                          <tr>
-                            <th>Tanggal</th>
-                            <th>No Nota</th>
-                            <th>Pelanggan</th>
-                            <th>Jumlah</th>
-                            <th>Total</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <!-- data akan diisi oleh getPenjualan -->
-                        </tbody>
-                      </table>
+                    <div class="row">
+                      <div class="col-9">
+                        <h3 id="cardPaketFavorit" class="mb-0 stat-value">-</h3>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-star-circle icon-item"></span>
+                        </div>
+                      </div>
                     </div>
-                    <div class="mt-3">
-                      <button id="btnExportExcel" class="btn btn-primary">
-                        Export Excel
-                      </button>
-                      <button id="btnExportPDF" class="btn btn-secondary">
-                        Export PDF
-                      </button>
-                    </div>
+                    <h6 class="text-muted font-weight-normal">
+                      Paket Paling Banyak Dipilih
+                    </h6>
                   </div>
                 </div>
               </div>
@@ -290,274 +323,99 @@
             >
               <span
                 class="text-muted d-block text-center text-sm-left d-sm-inline-block"
-                >© 2025 KWITANSI-TELUR</span
+                >Copyright © 2025</span
               >
             </div>
           </footer>
         </div>
-        <!-- END MAIN CONTENT -->
       </div>
-      <!-- END PAGE BODY WRAPPER -->
     </div>
 
-    <!-- core:js -->
+    <!-- JS -->
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
-    <!-- plugin js for charts and maps (if needed) -->
-    <script src="assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
-    <script src="assets/vendors/chart.js/Chart.min.js"></script>
-
-    <!-- app scripts (kept same names as template) -->
-    <script src="assets/js/off-canvas.js"></script>
-    <script src="assets/js/hoverable-collapse.js"></script>
-    <script src="assets/js/misc.js"></script>
-    <script src="assets/js/settings.js"></script>
-    <script src="assets/js/todolist.js"></script>
-
-    <!-- Libraries for export (CDN) - required for Export Excel / PDF -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
-    <!-- Load firebase modular file (relative import recommended) -->
-    <script type="module" src="./firebase.js"></script>
-
-    <!-- App logic (modular) - tetap memakai import dari firebase.js -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module">
-      // import modul dari firebase.js — pastikan file firebase.js mengekspor nama-nama ini
       import {
-        getPenjualan,
-        getBarang,
-        getPelanggan,
+        requireAuthRedirect,
         onAuthStateChangedHandler,
         signOut,
+        db,
       } from "./firebase.js";
+      import {
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-      // helper: safe set text
-      const setText = (id, value) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value;
-      };
+      await requireAuthRedirect();
 
-      const formatRupiah = (number) =>
-        new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          minimumFractionDigits: 0,
-        }).format(number || 0);
-
-      // --- Sidebar toggler (minimize / offcanvas) compatible dengan template KWITANSI ---
-      (function initSidebarToggle() {
-        const COLLAPSE_CLASS = "sidebar-collapsed";
-        const OFFCANVAS_CLASS = "sidebar-open";
-        const sidebar = document.getElementById("sidebar");
-        if (!sidebar) return;
-
-        // overlay for mobile
-        let overlay = null;
-        function ensureOverlay() {
-          if (!overlay) {
-            overlay = document.createElement("div");
-            overlay.className = "overlay-mobile";
-            overlay.addEventListener("click", () => {
-              document.body.classList.remove(OFFCANVAS_CLASS);
-              removeOverlay();
-            });
-          }
-          return overlay;
-        }
-        function removeOverlay() {
-          if (overlay && overlay.parentNode)
-            overlay.parentNode.removeChild(overlay);
-        }
-
-        function toggleCollapse() {
-          if (
-            window.matchMedia &&
-            window.matchMedia("(max-width:991px)").matches
-          ) {
-            toggleOffcanvas();
-            return;
-          }
-          document.body.classList.toggle(COLLAPSE_CLASS);
-        }
-        function toggleOffcanvas() {
-          if (document.body.classList.contains(OFFCANVAS_CLASS)) {
-            document.body.classList.remove(OFFCANVAS_CLASS);
-            removeOverlay();
-            document.documentElement.style.overflow = "";
-          } else {
-            document.body.classList.add(OFFCANVAS_CLASS);
-            document.body.appendChild(ensureOverlay());
-            document.documentElement.style.overflow = "hidden";
-          }
-        }
-
-        document.querySelectorAll('[data-toggle="minimize"]').forEach((btn) =>
-          btn.addEventListener("click", (e) => {
-            e.preventDefault();
-            toggleCollapse();
-          })
-        );
-        document.querySelectorAll('[data-toggle="offcanvas"]').forEach((btn) =>
-          btn.addEventListener("click", (e) => {
-            e.preventDefault();
-            toggleOffcanvas();
-          })
-        );
-
-        window.addEventListener("resize", () => {
-          if (
-            !(
-              window.matchMedia &&
-              window.matchMedia("(max-width:991px)").matches
-            )
-          ) {
-            document.body.classList.remove(OFFCANVAS_CLASS);
-            removeOverlay();
-            document.documentElement.style.overflow = "";
-          }
-        });
-
-        document.addEventListener("click", (ev) => {
-          if (!document.body.classList.contains(OFFCANVAS_CLASS)) return;
-          if (sidebar.contains(ev.target)) return;
-          if (ev.target.closest('[data-toggle="offcanvas"]')) return;
-          document.body.classList.remove(OFFCANVAS_CLASS);
-          removeOverlay();
-          document.documentElement.style.overflow = "";
-        });
-
-        document.addEventListener("keydown", (ev) => {
-          if (
-            ev.key === "Escape" &&
-            document.body.classList.contains(OFFCANVAS_CLASS)
-          ) {
-            document.body.classList.remove(OFFCANVAS_CLASS);
-            removeOverlay();
-            document.documentElement.style.overflow = "";
-          }
-        });
-      })();
-
-      // --- Auth guard & UI wiring (uses onAuthStateChangedHandler from firebase.js) ---
-      // This will redirect to login if no user, and populate profile placeholders if user present.
-      onAuthStateChangedHandler((user) => {
-        if (!user) {
-          window.location.href = "login.html";
-          return;
-        }
-        // update profile placeholders (many templates have different selectors)
-        const name = user.displayName || user.email || "User";
-        const photo = user.photoURL || "assets/images/faces/face15.jpg";
-
-        // several selectors to cover multiple template variants
-        document
-          .querySelectorAll(
-            "#profileName, #profileNameSmall, .navbar-profile-name, .profile-name p, .profile-name"
-          )
-          .forEach((el) => {
-            el.textContent = name;
-          });
-        document
-          .querySelectorAll(
-            "#profilePhoto, #profilePhotoSmall, .navbar-profile img, .profile-pic img"
-          )
-          .forEach((img) => {
-            if (img) img.src = photo;
-          });
-      });
-
-      // safe logout wiring (calls signOut exported from firebase.js)
+      const profileName = document.getElementById("profileName");
+      const profilePhoto = document.getElementById("profilePhoto");
       const logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", async (e) => {
-          e.preventDefault();
-          try {
-            await signOut();
-            window.location.href = "login.html";
-          } catch (err) {
-            console.error("Logout failed:", err);
-            alert("Gagal logout: " + (err && err.message ? err.message : err));
-          }
+
+      onAuthStateChangedHandler((user) => {
+        if (user) {
+          profileName.textContent = user.displayName || user.email;
+          if (user.photoURL) profilePhoto.src = user.photoURL;
+        }
+      });
+
+      logoutBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const ask = await Swal.fire({
+          title: "Log out?",
+          text: "Kamu akan keluar dari sesi ini.",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Keluar",
         });
-      }
+        if (ask.isConfirmed) await signOut();
+      });
 
-      // --- Data loading: gunakan getPenjualan dari firebase.js (modular) ---
-      async function loadPenjualanToTable() {
+      // === ambil data dari Firestore untuk isi kartu ===
+      async function loadDashboard() {
         try {
-          const penjualan = await getPenjualan(); // asumsi: mengembalikan array dokumen
-          const tbody = document.querySelector("#tblPenjualan tbody");
-          if (!tbody) return;
-          tbody.innerHTML = "";
-          let totalRevenue = 0;
-          let countToday = 0;
-          const today = new Date().toISOString().slice(0, 10);
+          const siswaSnap = await getDocs(collection(db, "siswa"));
+          const nilaiSnap = await getDocs(collection(db, "nilai"));
+          const qrSnap = await getDocs(collection(db, "qr"));
 
-          penjualan.forEach((p) => {
-            // p harus punya fields: tanggal (YYYY-MM-DD), nota, pelanggan, jumlah, total
-            const row = document.createElement("tr");
-            const tanggal = p.tanggal || "";
-            const nota = p.nota || p.id || "-";
-            const pelanggan = p.pelanggan || "-";
-            const jumlah = p.jumlah || 0;
-            const total = p.total || 0;
-            totalRevenue += Number(total || 0);
-            if (tanggal === today) countToday++;
+          const totalSiswa = siswaSnap.size;
+          const totalNilai = nilaiSnap.size;
+          const totalQR = qrSnap.size;
 
-            row.innerHTML = `
-              <td>${tanggal}</td>
-              <td>${nota}</td>
-              <td>${pelanggan}</td>
-              <td>${jumlah}</td>
-              <td>${formatRupiah(total)}</td>
-            `;
-            tbody.appendChild(row);
+          document.getElementById("cardTotalSiswa").textContent = totalSiswa;
+          document.getElementById("cardTotalNilai").textContent = totalNilai;
+          document.getElementById("cardTotalQR").textContent = totalQR;
+
+          // hitung paket favorit
+          const paketCount = {};
+          siswaSnap.forEach((doc) => {
+            const data = doc.data();
+            const paket = data.pilihanPaket || "-";
+            paketCount[paket] = (paketCount[paket] || 0) + 1;
           });
 
-          // update cards
-          setText("cardRevenue", formatRupiah(totalRevenue));
-          setText("cardDayTx", String(countToday));
-          setText("cardMonthTx", String(penjualan.length));
-        } catch (err) {
-          console.error("loadPenjualanToTable error:", err);
+          let favorit = "-";
+          let max = 0;
+          Object.entries(paketCount).forEach(([paket, count]) => {
+            if (count > max) {
+              max = count;
+              favorit = paket;
+            }
+          });
+
+          document.getElementById("cardPaketFavorit").textContent = favorit;
+        } catch (e) {
+          console.error(e);
+          Swal.fire("Gagal memuat data dashboard", e.message, "error");
         }
       }
 
-      // wire buttons export (xlsx & pdf libs loaded earlier)
-      document.addEventListener("DOMContentLoaded", async () => {
-        const btnX = document.getElementById("btnExportExcel");
-        const btnP = document.getElementById("btnExportPDF");
-        if (btnX)
-          btnX.addEventListener("click", async () => {
-            try {
-              // simple table->xlsx export (minimal)
-              const tbl = document.getElementById("tblPenjualan");
-              const wb = XLSX.utils.table_to_book(tbl, { sheet: "Penjualan" });
-              XLSX.writeFile(wb, "penjualan.xlsx");
-            } catch (err) {
-              console.error(err);
-              alert("Gagal export Excel");
-            }
-          });
-        if (btnP)
-          btnP.addEventListener("click", async () => {
-            try {
-              const { jsPDF } = window.jspdf;
-              const doc = new jsPDF();
-              doc.text("Daftar Penjualan", 10, 10);
-              doc.autoTable({ html: "#tblPenjualan", startY: 20 });
-              doc.save("penjualan.pdf");
-            } catch (err) {
-              console.error(err);
-              alert("Gagal export PDF");
-            }
-          });
-
-        // initial load
-        await loadPenjualanToTable();
-        // refresh periodically (10s)
-        setInterval(loadPenjualanToTable, 10000);
-      });
+      loadDashboard();
     </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/startbootstrap/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
   </body>
 </html>
