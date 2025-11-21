@@ -312,5 +312,5 @@ export {
   getDocs,
   writeBatch,
   signInWithGoogle,
-  getCurrentUserOnce,
+  // getCurrentUserOnce,
 };
