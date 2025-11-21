@@ -17,6 +17,15 @@ import {
   getDocs,
   writeBatch,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// get current user sekali tanpa subscribe
+export function getCurrentUserOnce() {
+  return new Promise((resolve) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      unsub();
+      resolve(user);
+    });
+  });
+}
 
 import {
   getAuth,
@@ -289,14 +298,14 @@ export function requireAuthRedirect(loginUrl = "/login.html") {
 /**
  * small helper: get current user once (Promise)
  */
-export function getCurrentUserOnce() {
-  return new Promise((resolve) => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      unsub();
-      resolve(user || null);
-    });
-  });
-}
+// export function getCurrentUserOnce() {
+//   return new Promise((resolve) => {
+//     const unsub = onAuthStateChanged(auth, (user) => {
+//       unsub();
+//       resolve(user || null);
+//     });
+//   });
+// }
 
 /* ========================
    12) Re-ekspos util Firestore (dipakai HTML)
