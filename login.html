@@ -90,7 +90,7 @@
 
       // jika sudah login, redirect ke next
       (async () => {
-        // const user = await getCurrentUserOnce();
+        const user = await getCurrentUserOnce();
         const params = new URLSearchParams(location.search);
         const next = params.get("next") || "/index.html";
         if (user) {
