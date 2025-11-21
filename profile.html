@@ -3,363 +3,126 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CADENZA — Profil Siswa</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Vendor CSS -->
-    <link
-      rel="stylesheet"
-      href="assets/vendors/mdi/css/materialdesignicons.min.css"
-    />
-    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css" />
+    <title>Profil Siswa — Publik</title>
     <link rel="stylesheet" href="assets/css/style.css" />
-    <link rel="shortcut icon" href="assets/images/favicon.png" />
-
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <style>
-      :root {
-        --glass-bg: rgba(255, 255, 255, 0.08);
-        --glass-bd: rgba(255, 255, 255, 0.12);
-        --text-dim: #d9d9d9;
-        --accent: #ffd369;
-      }
-
-      html,
+      /* (sederhana) — salin style dari file original atau pakai style di bawah */
       body {
-        height: 100%;
-      }
-      body {
-        background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%);
-        font-family: "Poppins", ui-sans-serif, system-ui, -apple-system,
-          "Segoe UI", Roboto, "Helvetica Neue", Arial;
-        color: #f5f5f5;
+        font-family: Poppins, sans-serif;
+        background: #111;
+        color: #fff;
         padding: 24px;
       }
-
       .card {
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-bd);
-        border-radius: 18px;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-      }
-      .card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
-      }
-
-      .section-title {
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        letter-spacing: 0.3px;
-        color: var(--accent);
-        border-bottom: 2px solid rgba(255, 255, 255, 0.15);
-        display: inline-block;
-        padding-bottom: 0.25rem;
-      }
-
-      .stat-label {
-        color: var(--text-dim);
-        font-size: 0.85rem;
-      }
-
-      .chip {
-        display: inline-block;
-        padding: 0.22rem 0.62rem;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #ff7eb3, #ff758c);
-        color: #fff;
-        margin: 0 0.35rem 0.35rem 0;
-        font-size: 0.85rem;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-        white-space: nowrap;
-      }
-
-      .truncate {
-        max-width: 420px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .form-control,
-      .form-select,
-      .form-control:focus,
-      .form-select:focus {
-        color: #fff;
-        background: #2b2f32;
-        border-color: rgba(255, 255, 255, 0.25);
-      }
-      .form-control::placeholder {
-        color: rgba(255, 255, 255, 0.65);
-      }
-      .form-control:focus,
-      .form-select:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 0.2rem rgba(255, 211, 105, 0.25);
-      }
-
-      .btn {
+        background: rgba(255, 255, 255, 0.04);
         border-radius: 12px;
-        transition: all 0.25s ease;
+        padding: 16px;
+        margin-bottom: 12px;
       }
-      .btn i {
-        vertical-align: -2px;
-      }
-      .btn:hover {
-        transform: translateY(-2px);
-        opacity: 0.95;
-      }
-
-      .user-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.6rem;
-        padding: 0.4rem 0.75rem;
-        border-radius: 999px;
-        border: 1px solid var(--glass-bd);
-        background: rgba(255, 255, 255, 0.06);
-      }
-      .user-chip img {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        object-fit: cover;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
-      }
-
       .qr-img {
         width: 150px;
         height: 150px;
         object-fit: contain;
-        border-radius: 16px;
-        padding: 10px;
-        background: rgba(255, 255, 255, 0.05);
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 8px;
       }
-
-      .table {
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
         color: #fff;
-        margin-bottom: 0;
       }
-      #nilaiTable thead {
-        color: #fff;
-        border: none;
+      table th,
+      table td {
+        padding: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        text-align: left;
       }
-      .table-striped tbody tr:nth-of-type(odd) {
-        background-color: rgba(255, 255, 255, 0.05);
+      .text-muted {
+        color: #cfcfcf;
+        font-size: 0.9rem;
       }
-      .table-hover tbody tr:hover {
-        background-color: rgba(255, 255, 255, 0.12);
-      }
-      .table td,
-      .table th {
-        vertical-align: middle;
-      }
-
-      @media print {
-        .no-print {
-          display: none !important;
-        }
-        .card {
-          box-shadow: none !important;
-        }
-        body {
-          background: #fff;
-          color: #000;
-        }
-        .chip {
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
+      .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: #2b8;
+        color: #000;
+        text-decoration: none;
+        margin-right: 8px;
       }
     </style>
   </head>
-
   <body>
-    <div class="container-scroller">
-      <div class="container-fluid">
-        <div class="content-wrapper">
-          <!-- Tombol atas -->
-          <div
-            class="d-flex flex-wrap align-items-center justify-content-between gap-2 no-print"
-          >
-            <div class="d-flex align-items-center gap-2">
-              <button id="btnCopyUrl" class="btn btn-outline-light btn-sm">
-                <i class="mdi mdi-content-copy"></i> Salin URL Profil
-              </button>
-              <a
-                id="btnDownloadQR"
-                class="btn btn-outline-success btn-sm"
-                download="qr-profil.png"
-              >
-                <i class="mdi mdi-download"></i> Unduh QR
-              </a>
-              <button id="btnPrint" class="btn btn-outline-info btn-sm">
-                <i class="mdi mdi-printer"></i> Cetak
-              </button>
-            </div>
-          </div>
-
-          <!-- Profil + QR -->
-          <div class="row mt-3">
-            <!-- QR -->
-            <div class="col-lg-4 mb-3">
-              <div class="card h-100">
-                <div
-                  class="card-body text-center d-flex flex-column justify-content-center align-items-center"
-                >
-                  <div class="section-title">Cadenza Music Jayapura</div>
-                  <img
-                    class="qr-img mb-2"
-                    src="Logo Cadenza.jpg"
-                    alt="Cadenza"
-                  />
-                  <div class="text-muted small">
-                    www.cadenzamusicjayapura.com
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Informasi siswa -->
-            <div class="col-lg-8">
-              <div class="card">
-                <div class="card-body">
-                  <div class="section-title">Informasi Siswa</div>
-                  <div class="row g-3">
-                    <div class="col-md-6 mb-3">
-                      <div class="stat-label">Nama Siswa</div>
-                      <div id="fNama" class="h5 mb-0">-</div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                      <div class="stat-label">Jenis Kelamin</div>
-                      <div id="fJK">-</div>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                      <div class="stat-label">Tempat & Tanggal Lahir</div>
-                      <div id="fTTL" class="truncate">-</div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <div class="stat-label">Alamat</div>
-                      <div id="fAlamat" class="truncate">-</div>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                      <div class="stat-label">Kontak Siswa</div>
-                      <div id="fTelp">-</div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <div class="stat-label">Ortu/Wali</div>
-                      <div id="fOrtu">-</div>
-                      <div id="fTelpOrtu" class="text-muted small"></div>
-                    </div>
-
-                    <div class="col-12 mb-3 mb-3">
-                      <div class="stat-label">Instrumen</div>
-                      <div id="fInstrumen">-</div>
-                    </div>
-                    <div class="col-12 mb-3">
-                      <div class="stat-label">Paket</div>
-                      <div id="fPaket">-</div>
-                    </div>
-
-                    <!-- <div class="col-12 mt-2">
-                      <div class="stat-label">URL Profil</div>
-                      <a
-                        id="profileUrlA"
-                        href="#"
-                        target="_blank"
-                        rel="noopener"
-                        class="text-decoration-underline small"
-                        >-</a
-                      >
-                    </div> -->
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Riwayat Nilai -->
-          <div class="row mt-3">
-            <div class="col-12">
-              <div class="card">
-                <div class="card-body">
-                  <div
-                    class="d-flex align-items-center justify-content-between"
-                  >
-                    <div class="section-title mb-0">Riwayat Nilai</div>
-                    <small id="countNilai" class="text-muted"></small>
-                  </div>
-
-                  <div class="table-responsive mt-2">
-                    <table
-                      id="nilaiTable"
-                      class="table table-striped table-hover align-middle"
-                    >
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Tanggal</th>
-                          <th>Instrumen</th>
-                          <th>Instruktur</th>
-                          <th>Predikat</th>
-                          <th>Materi</th>
-                          <th>Tautan</th>
-                        </tr>
-                      </thead>
-                      <tbody></tbody>
-                    </table>
-                  </div>
-                  <small class="text-muted">Urut dari yang terbaru.</small>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <footer class="footer mt-3">
-            <div
-              class="d-sm-flex justify-content-center justify-content-sm-between"
-            >
-              <span
-                class="text-muted d-block text-center text-sm-left d-sm-inline-block"
-                >Copyright © 2025</span
-              >
-            </div>
-          </footer>
+    <div class="card">
+      <div style="display: flex; gap: 16px; align-items: center">
+        <img id="logo" src="Logo Cadenza.jpg" alt="logo" class="qr-img" />
+        <div>
+          <h2 id="fNama">-</h2>
+          <div id="fInstrumen" class="text-muted">-</div>
+          <div id="fPaket" class="text-muted">-</div>
         </div>
       </div>
     </div>
 
-    <!-- Vendor JS -->
-    <script src="assets/vendors/js/vendor.bundle.base.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="card">
+      <h3>Informasi</h3>
+      <div class="text-muted">Jenis Kelamin: <span id="fJK">-</span></div>
+      <div class="text-muted">
+        Tempat/Tanggal Lahir: <span id="fTTL">-</span>
+      </div>
+      <div class="text-muted">Alamat: <span id="fAlamat">-</span></div>
+      <div class="text-muted">Kontak: <span id="fTelp">-</span></div>
+      <div class="text-muted">
+        Ortu/Wali: <span id="fOrtu">-</span> <span id="fTelpOrtu"></span>
+      </div>
+    </div>
 
-    <!-- Firebase Logic -->
+    <div class="card">
+      <h3>Riwayat Nilai <small id="countNilai" class="text-muted"></small></h3>
+      <table id="nilaiTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tanggal</th>
+            <th>Instrumen</th>
+            <th>Instruktur</th>
+            <th>Predikat</th>
+            <th>Materi</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 12px">
+      <a id="btnCopyUrl" class="btn">Salin URL Profil</a>
+      <a id="btnPrint" class="btn">Cetak</a>
+    </div>
+
+    <!-- gunakan path ke firebase.js yang kamu upload; contoh path lokal server: /mnt/data/firebase.js -->
     <script type="module">
-      import { getStudent, onNilaiSnapshot } from "./firebase.js";
+      // **GANTI PATH** jika firebase.js disimpan di lokasi lain di server
+      import { getStudent, onNilaiSnapshot } from "/mnt/data/firebase.js"; // <-- path file firebase.js di servermu
+      // jika environment kamu pakai relative, bisa: "./firebase.js"
 
       const params = new URLSearchParams(location.search);
       const id = params.get("id");
       const profileUrl = window.location.href;
 
-      if (id) {
+      if (!id) {
+        document.querySelector("#nilaiTable tbody").innerHTML =
+          '<tr><td colspan="6" class="text-center text-muted">Buka halaman ini dengan parameter <code>?id=ID_SISWA</code></td></tr>';
+      } else {
         // ambil data siswa
         getStudent(id).then((s) => {
-          if (!s) return;
+          if (!s) {
+            document.getElementById("fNama").textContent =
+              "Profil tidak ditemukan";
+            return;
+          }
           document.getElementById("fNama").textContent = s.namaSiswa || "-";
           document.getElementById("fJK").textContent = s.jenisKelamin || "-";
           document.getElementById("fTTL").textContent =
@@ -369,28 +132,24 @@
           document.getElementById("fOrtu").textContent = s.namaOrtu || "-";
           document.getElementById("fTelpOrtu").textContent =
             s.noTeleponOrtu || "";
-          // pilihanIstrumen di database mungkin array
           document.getElementById("fInstrumen").textContent = Array.isArray(
             s.pilihanIstrumen
           )
             ? s.pilihanIstrumen.join(", ")
             : s.pilihanIstrumen || "-";
           document.getElementById("fPaket").textContent = s.pilihanPaket || "-";
-          document.getElementById("profileUrlA").href = profileUrl;
-          document.getElementById("profileUrlA").textContent = profileUrl;
         });
 
-        // realtime nilai
+        // realtime nilai (akan berjalan tanpa auth jika rules mengizinkan)
         onNilaiSnapshot((list) => {
           const tbody = document.querySelector("#nilaiTable tbody");
-          // filter berdasarkan siswaId (harus sesuai field di koleksi 'nilai')
           const data = list.filter((n) => n.siswaId === id);
 
-          // optional: urutkan by tanggal jika field tanggal tersedia dalam format YYYY-MM-DD
+          // urutkan terbaru dulu
           data.sort((a, b) => {
             const ta = a.tanggal ? new Date(a.tanggal) : new Date(0);
             const tb = b.tanggal ? new Date(b.tanggal) : new Date(0);
-            return tb - ta; // terbaru dulu
+            return tb - ta;
           });
 
           document.getElementById(
@@ -399,28 +158,9 @@
 
           tbody.innerHTML = data
             .map((d, i) => {
-              // materi bisa berupa array atau string
               const materiHTML = Array.isArray(d.materi)
                 ? d.materi.map((m) => (m || "").toString().trim()).join("<br>")
                 : String(d.materi || "").replace(/\n/g, "<br>");
-
-              // tautan bisa array atau multiline string
-              const tautanHTML = Array.isArray(d.tautan)
-                ? d.tautan
-                    .map(
-                      (t) =>
-                        `<a href="${t}" target="_blank" class="text-info">${t}</a>`
-                    )
-                    .join("<br>")
-                : String(d.tautan || "")
-                    .split("\n")
-                    .filter((t) => t.trim())
-                    .map(
-                      (t) =>
-                        `<a href="${t}" target="_blank" class="text-info">${t}</a>`
-                    )
-                    .join("<br>");
-
               return `
                 <tr>
                   <td>${i + 1}</td>
@@ -429,25 +169,20 @@
                   <td>${d.instruktur || "-"}</td>
                   <td>${d.predikat || "-"}</td>
                   <td>${materiHTML}</td>
-                  <td>${tautanHTML}</td>
                 </tr>
               `;
             })
             .join("");
         });
-      } else {
-        // tidak ada id di query string
-        document.querySelector("#nilaiTable tbody").innerHTML =
-          '<tr><td colspan="7" class="text-center text-muted">Buka halaman ini dengan parameter <code>?id=ID_SISWA</code></td></tr>';
       }
 
-      // tombol print & salin URL
+      // tombol salin & cetak
       document
         .getElementById("btnPrint")
-        ?.addEventListener("click", () => window.print());
+        .addEventListener("click", () => window.print());
       document
         .getElementById("btnCopyUrl")
-        ?.addEventListener("click", async () => {
+        .addEventListener("click", async () => {
           try {
             await navigator.clipboard.writeText(profileUrl);
             Swal.fire(
@@ -459,16 +194,6 @@
             Swal.fire("Gagal", "Tidak dapat menyalin URL.", "error");
           }
         });
-
-      // tombol unduh QR: jika kamu ingin membuat QR dari profileUrl,
-      // set attribute href ke endpoint pembuat QR (mis: api.qrserver.com)
-      const btnDownloadQR = document.getElementById("btnDownloadQR");
-      if (btnDownloadQR) {
-        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
-          profileUrl
-        )}`;
-        btnDownloadQR.href = qrUrl;
-      }
     </script>
   </body>
 </html>
