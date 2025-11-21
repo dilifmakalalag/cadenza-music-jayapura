@@ -590,15 +590,15 @@
     <script type="module">
       /* 1) Import dari firebase.js: db + helper */
       import {
-        requireAuthRedirect,
+        // requireAuthRedirect,
         db,
         onStudentsSnapshot,
         getStudent,
         addStudent,
         updateStudent,
         deleteStudent,
-        onAuthStateChangedHandler,
-        signOut,
+        // onAuthStateChangedHandler,
+        // signOut,
       } from "./firebase.js";
 
       /* 2) Util Firestore langsung dari CDN (versi sama dgn firebase.js) */
@@ -613,7 +613,7 @@
         getDocs,
         writeBatch,
       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-      await requireAuthRedirect();
+      // await requireAuthRedirect();
       /* ====== KONFIG NAMA KOLEKSI ====== */
       const STUDENTS_COL = "siswa";
       const NILAI_COL = "nilai";
