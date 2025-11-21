@@ -270,33 +270,33 @@ export function onQrSnapshot(callback) {
  * - jika user sudah login -> resolve(true)
  * - jika belum -> redirect ke login.html?next=... dan resolve(false)
  */
-// export function requireAuthRedirect(loginUrl = "/login.html") {
-//   return new Promise((resolve) => {
-//     const unsub = onAuthStateChanged(auth, (user) => {
-//       unsub();
-//       if (!user) {
-//         const next = encodeURIComponent(location.pathname + location.search);
-//         // gunakan absolute path jika perlu; biarkan loginUrl relatif
-//         window.location.href = `${loginUrl}?next=${next}`;
-//         resolve(false);
-//       } else {
-//         resolve(true);
-//       }
-//     });
-//   });
-// }
+export function requireAuthRedirect(loginUrl = "/login.html") {
+  return new Promise((resolve) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      unsub();
+      if (!user) {
+        const next = encodeURIComponent(location.pathname + location.search);
+        // gunakan absolute path jika perlu; biarkan loginUrl relatif
+        window.location.href = `${loginUrl}?next=${next}`;
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+}
 
 /**
  * small helper: get current user once (Promise)
  */
-// export function getCurrentUserOnce() {
-//   return new Promise((resolve) => {
-//     const unsub = onAuthStateChanged(auth, (user) => {
-//       unsub();
-//       resolve(user || null);
-//     });
-//   });
-// }
+export function getCurrentUserOnce() {
+  return new Promise((resolve) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      unsub();
+      resolve(user || null);
+    });
+  });
+}
 
 /* ========================
    12) Re-ekspos util Firestore (dipakai HTML)
@@ -311,6 +311,6 @@ export {
   where,
   getDocs,
   writeBatch,
-  // signInWithGoogle,
-  // getCurrentUserOnce,
+  signInWithGoogle,
+  getCurrentUserOnce,
 };
