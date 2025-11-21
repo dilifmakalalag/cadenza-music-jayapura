@@ -236,34 +236,34 @@ export function onQrSnapshot(callback) {
 /**
  * existing small helpers
  */
-// export function onAuthStateChangedHandler(callback) {
-//   return onAuthStateChanged(auth, callback);
-// }
-// export async function signOut() {
-//   try {
-//     await fbSignOut(auth);
-//   } catch (e) {
-//     console.error("signOut error:", e);
-//     alert("Gagal logout.");
-//   }
-// }
+export function onAuthStateChangedHandler(callback) {
+  return onAuthStateChanged(auth, callback);
+}
+export async function signOut() {
+  try {
+    await fbSignOut(auth);
+  } catch (e) {
+    console.error("signOut error:", e);
+    alert("Gagal logout.");
+  }
+}
 
 /**
  * Sign in with Google (popup)
  */
-// const googleProvider = new GoogleAuthProvider();
-// googleProvider.setCustomParameters({ prompt: "select_account" });
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
 
-// export async function signInWithGoogle() {
-//   try {
-//     const result = await signInWithPopup(auth, googleProvider);
-//     // result.user tersedia
-//     return result;
-//   } catch (e) {
-//     console.error("signInWithGoogle error:", e);
-//     throw e;
-//   }
-// }
+export async function signInWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    // result.user tersedia
+    return result;
+  } catch (e) {
+    console.error("signInWithGoogle error:", e);
+    throw e;
+  }
+}
 
 /**
  * requireAuthRedirect:
